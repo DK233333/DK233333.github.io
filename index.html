@@ -149,6 +149,198 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-代理模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/21/代理模式/">代理模式</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/21/代理模式/" class="archive-article-date">
+  	<time datetime="2017-12-21T03:37:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/21/代理模式/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-降低项目耦合度的办法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/21/降低项目耦合度的办法/">降低项目耦合度的办法</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/21/降低项目耦合度的办法/" class="archive-article-date">
+  	<time datetime="2017-12-21T03:33:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="工厂模式加反射"><a href="#工厂模式加反射" class="headerlink" title="工厂模式加反射"></a>工厂模式加反射</h2><p>如果要用到某对象，这个对象对应的类今后修改的可能性比较大，则设计一个工厂来生产该对象，而生产的方式依赖于配置文件中的类名，用反射完成对象的构建</p>
+<p>定义接口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">package factory;  </span><br><span class="line">  </span><br><span class="line">public interface Car  </span><br><span class="line">&#123;  </span><br><span class="line">    public void drive();  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实现类<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package factory;  </span><br><span class="line">  </span><br><span class="line">public class CarImpl01 implements Car  </span><br><span class="line">&#123;  </span><br><span class="line">    @Override  </span><br><span class="line">    public void drive()  </span><br><span class="line">    &#123;  </span><br><span class="line">        // TODO 自动生成的方法存根  </span><br><span class="line">        System.out.println(&quot;this is a benz car&quot;);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>工厂类<br><figure class="highlight plain"><figcaption><span>factory;  </span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line">import java.io.File;  </span><br><span class="line">import java.io.FileInputStream;  </span><br><span class="line">import java.io.FileNotFoundException;  </span><br><span class="line">import java.io.IOException;  </span><br><span class="line">import java.io.InputStream;  </span><br><span class="line">import java.util.Properties;  </span><br><span class="line">  </span><br><span class="line">public class Factory  </span><br><span class="line">&#123;  </span><br><span class="line">    private static Car car = null;  </span><br><span class="line">    private static Factory instance = new Factory();  </span><br><span class="line">//  上面两行代码位置不可以互换，否则会抛出空指针异常（联系类的初始化顺序）  </span><br><span class="line">    private Factory()//单例  </span><br><span class="line">    &#123;  </span><br><span class="line">        String filename = &quot;src\\factory\\CarImpl.properties&quot;;  </span><br><span class="line">        InputStream inStream = null;  </span><br><span class="line">        try  </span><br><span class="line">        &#123;  </span><br><span class="line">            inStream = new FileInputStream(new File(filename));  </span><br><span class="line">            Properties prop = new Properties();  </span><br><span class="line">            prop.load(inStream);  </span><br><span class="line">            String className = prop.getProperty(&quot;carImplName&quot;);  </span><br><span class="line">            car = (Car)Class.forName(className).newInstance();  </span><br><span class="line">        &#125;  </span><br><span class="line">        catch (FileNotFoundException e)  </span><br><span class="line">        &#123;  </span><br><span class="line">            // TODO 自动生成的 catch 块  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">/* </span><br><span class="line">这里异常处理过于简单，实际开发需要针对不同业务逻辑编写不同的异常处理方式 </span><br><span class="line">*/  </span><br><span class="line">        &#125;  </span><br><span class="line">        catch (IOException e)  </span><br><span class="line">        &#123;  </span><br><span class="line">            // TODO 自动生成的 catch 块  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125;  </span><br><span class="line">        catch (InstantiationException e)  </span><br><span class="line">        &#123;  </span><br><span class="line">            // TODO 自动生成的 catch 块  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125;  </span><br><span class="line">        catch (IllegalAccessException e)  </span><br><span class="line">        &#123;  </span><br><span class="line">            // TODO 自动生成的 catch 块  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125;  </span><br><span class="line">        catch (ClassNotFoundException e)  </span><br><span class="line">        &#123;  </span><br><span class="line">            // TODO 自动生成的 catch 块  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125;  </span><br><span class="line">          </span><br><span class="line">    &#125;  </span><br><span class="line">    public static Factory getInstance()  </span><br><span class="line">    &#123;  </span><br><span class="line">        return instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    public Car buildCar()  </span><br><span class="line">    &#123;  </span><br><span class="line">        return car;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/21/降低项目耦合度的办法/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-关于io" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/21/关于io/">关于io</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/21/关于io/" class="archive-article-date">
+  	<time datetime="2017-12-21T03:10:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1的二进制是1111-1111-1111-1111"><a href="#1的二进制是1111-1111-1111-1111" class="headerlink" title="-1的二进制是1111  1111 1111 1111"></a>-1的二进制是1111  1111 1111 1111</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 000 0000 0001 第一位表示符号位 1代表负</span><br><span class="line">C语言以补码方式存储数据，则将原数据取反加1（符号位不变）得</span><br><span class="line">1 111 1111 1111</span><br></pre></td></tr></table></figure>
+<p>字符流中，返回结果要和0xff做与运算，因为可能出现二进制-1的情况</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/21/关于io/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-MarkDown语法提示" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
