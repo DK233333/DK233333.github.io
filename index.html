@@ -149,6 +149,260 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-广播" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/25/广播/">广播</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/25/广播/" class="archive-article-date">
+  	<time datetime="2017-12-25T09:56:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/25/广播/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-res-raw与assets区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/25/res-raw与assets区别/">res/raw与assets区别</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/25/res-raw与assets区别/" class="archive-article-date">
+  	<time datetime="2017-12-25T09:55:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>相同点：<br>1.两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。<br>2.assets目录下可以新建目录，而res/raw目录则不可以。<br>不同点：<br>1.由于raw是Resources (res)的子目录，Android会自动的为这目录中的所有资源文件生成一个ID，这个ID会被存储在R类当中，作为一个文件的引用。这意味着这个资源文件可以很容易的被Android的类和方法访问到，甚至在Android XML文件中你也可以以@raw/的形式引用到它。在Android中，使用ID是访问一个文件最快捷的方式。MP3和Ogg文件放在这个目录下是比较合适的。<br>2.assets目录更像一个附录类型的目录，Android不会为这个目录中的文件生成ID并保存在R类当中，因此它与Android中的一些类和方法兼容度更低。同时，由于你需要一个字符串路径来获取这个目录下的文件描述符，访问的速度会更慢。但是把一些文件放在这个目录下会使一些操作更加方便，比方说拷贝一个数据库文件到系统内存中。要注意的是，你无法在Android XML文件中引用到assets目录下的文件，只能通过AssetManager来访问这些文件。数据库文件和游戏数据等放在这个目录下是比较合适的。<br>使用：<br>比如给ImageView设置一张图片<br>res/raw:<br>假设图片路径:res/raw/demo.jpg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),R.raw.demo);  </span><br><span class="line">            iv_show.setImageBitmap(bitmap);  </span><br><span class="line">            bitmap = null;</span><br></pre></td></tr></table></figure>
+<p>或者：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">InputStream is = this.getResources().openRawResource(R.raw.demo);  </span><br><span class="line">            Bitmap image = BitmapFactory.decodeStream(is);  </span><br><span class="line">            iv_show.setImageBitmap(image);  </span><br><span class="line">            image = null;</span><br></pre></td></tr></table></figure></p>
+<p>assets:<br>假设图片路径：assets/image/image.jpg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">AssetManager manager = this.getAssets();  </span><br><span class="line">            try  </span><br><span class="line">            &#123;  </span><br><span class="line">                InputStream in = manager.open(&quot;image/image.jpg&quot;);//注意路径  </span><br><span class="line">                Bitmap bitmap = BitmapFactory.decodeStream(in);  </span><br><span class="line">                iv_show.setImageBitmap(bitmap);  </span><br><span class="line">                bitmap = null;  </span><br><span class="line">                System.gc();  </span><br><span class="line">            &#125; catch (IOException e)  </span><br><span class="line">            &#123;  </span><br><span class="line">                e.printStackTrace();  </span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/25/res-raw与assets区别/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-内容提供者" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/25/内容提供者/">内容提供者</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/25/内容提供者/" class="archive-article-date">
+  	<time datetime="2017-12-25T09:52:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://blog.csdn.net/chdjj/article/details/19075423" target="_blank" rel="noopener">基本用法</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/25/内容提供者/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-java注解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/25/java注解/">java注解</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/25/java注解/" class="archive-article-date">
+  	<time datetime="2017-12-25T09:38:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://blog.csdn.net/chdjj/article/details/18765347" target="_blank" rel="noopener">注解的基本用法</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/25/java注解/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Loader" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -566,71 +820,10 @@
 
 
   
-    <article id="post-第一次使用markdown" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/21/第一次使用markdown/">第一篇博客</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/21/第一次使用markdown/" class="archive-article-date">
-  	<time datetime="2017-12-21T02:02:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="MarkDown"><a href="#MarkDown" class="headerlink" title="MarkDown"></a>MarkDown</h2><p>不知道方不方便,语法可以参照<a href="https://dk233333.github.io/2017/12/21/MarkDown%E8%AF%AD%E6%B3%95%E6%8F%90%E7%A4%BA/" target="_blank" rel="noopener">这里</a></p>
-<h2 id="Hexo教程"><a href="#Hexo教程" class="headerlink" title="Hexo教程"></a>Hexo教程</h2><p>这是hexo的教程<a href="http://baixin.io/2015/08/HEXO%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" target="_blank" rel="noopener">点我</a><br>以及这一篇<a href="http://ibruce.info/2013/11/22/hexo-your-blog/" target="_blank" rel="noopener">hexo</a>教程</p>
-<h2 id="下一步要做的事情"><a href="#下一步要做的事情" class="headerlink" title="下一步要做的事情"></a>下一步要做的事情</h2><p>1.学习<a href="http://hukai.me/android-training-course-in-chinese/multimedia/audio/audio-focus.html" target="_blank" rel="noopener">安卓官方教程</a><br>2.学习<a href="http://blog.csdn.net/chdjj" target="_blank" rel="noopener">这篇博客</a>里面的知识点<br>3.找一些<a href="https://www.zhihu.com/question/28481864" target="_blank" rel="noopener">比较好的安卓开源项目</a><br>4.回顾一下java基础知识</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/21/第一次使用markdown/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 
 
