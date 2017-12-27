@@ -6,18 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>第一篇博客 | </title>
+  <title>BaseAdapter源码分析 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="MarkDown不知道方不方便,语法可以参照这里 Hexo教程这是hexo的教程点我以及这一篇hexo教程 下一步要做的事情1.学习安卓官方教程2.学习这篇博客，以及这篇博客 里面的知识点3.找一些比较好的安卓开源项目4.回顾一下java基础知识">
-<meta property="og:type" content="article">
-<meta property="og:title" content="第一篇博客">
-<meta property="og:url" content="http://yoursite.com/2017/12/21/第一次使用markdown/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="BaseAdapter源码分析">
+<meta property="og:url" content="http://yoursite.com/2017/12/27/BaseAdapter源码分析/index.html">
 <meta property="og:site_name">
-<meta property="og:description" content="MarkDown不知道方不方便,语法可以参照这里 Hexo教程这是hexo的教程点我以及这一篇hexo教程 下一步要做的事情1.学习安卓官方教程2.学习这篇博客，以及这篇博客 里面的知识点3.找一些比较好的安卓开源项目4.回顾一下java基础知识">
-<meta property="og:updated_time" content="2017-12-27T08:26:32.548Z">
+<meta property="og:updated_time" content="2017-12-27T09:33:05.849Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="第一篇博客">
-<meta name="twitter:description" content="MarkDown不知道方不方便,语法可以参照这里 Hexo教程这是hexo的教程点我以及这一篇hexo教程 下一步要做的事情1.学习安卓官方教程2.学习这篇博客，以及这篇博客 里面的知识点3.找一些比较好的安卓开源项目4.回顾一下java基础知识">
+<meta name="twitter:title" content="BaseAdapter源码分析">
   
     <link rel="alternative" href="/atom.xml" title="" type="application/atom+xml">
   
@@ -151,30 +148,27 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-第一次使用markdown" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-BaseAdapter源码分析" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      第一篇博客
+      BaseAdapter源码分析
     </h1>
   
 
         
-        <a href="/2017/12/21/第一次使用markdown/" class="archive-article-date">
-  	<time datetime="2017-12-21T02:02:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
+        <a href="/2017/12/27/BaseAdapter源码分析/" class="archive-article-date">
+  	<time datetime="2017-12-27T09:33:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-27</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="MarkDown"><a href="#MarkDown" class="headerlink" title="MarkDown"></a>MarkDown</h2><p>不知道方不方便,语法可以参照<a href="https://dk233333.github.io/2017/12/21/MarkDown%E8%AF%AD%E6%B3%95%E6%8F%90%E7%A4%BA/" target="_blank" rel="noopener">这里</a></p>
-<h2 id="Hexo教程"><a href="#Hexo教程" class="headerlink" title="Hexo教程"></a>Hexo教程</h2><p>这是hexo的教程<a href="http://baixin.io/2015/08/HEXO%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" target="_blank" rel="noopener">点我</a><br>以及这一篇<a href="http://ibruce.info/2013/11/22/hexo-your-blog/" target="_blank" rel="noopener">hexo</a>教程</p>
-<h2 id="下一步要做的事情"><a href="#下一步要做的事情" class="headerlink" title="下一步要做的事情"></a>下一步要做的事情</h2><p>1.学习<a href="http://hukai.me/android-training-course-in-chinese/multimedia/audio/audio-focus.html" target="_blank" rel="noopener">安卓官方教程</a><br>2.学习<a href="http://blog.csdn.net/chdjj" target="_blank" rel="noopener">这篇博客</a>，以及<a href="http://blog.csdn.net/iispring" target="_blank" rel="noopener">这篇博客</a> 里面的知识点<br>3.找一些<a href="https://www.zhihu.com/question/28481864" target="_blank" rel="noopener">比较好的安卓开源项目</a><br>4.回顾一下java基础知识</p>
-
+        
       
 
       
@@ -195,15 +189,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/12/21/MarkDown语法提示/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Hello World
-        
-      </div>
-    </a>
   
+    <a href="/2017/12/26/Handler源码分析/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Handler源码分析</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 
