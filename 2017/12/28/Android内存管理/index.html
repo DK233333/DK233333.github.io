@@ -14,16 +14,16 @@
 <meta property="og:url" content="http://yoursite.com/2017/12/28/Android内存管理/index.html">
 <meta property="og:site_name">
 <meta property="og:description" content="附录Android在4.4之前一直使用的Dalvik虚拟机作为App的运行VM的, 4.4中引入了ART作为开发者备选, 5.0起正式将ART作为默认VM了. Dalvik1.Dalvik基于寄存器  jvm基于栈，基于寄存器的虚拟机对于编译后变大的程序来说，在它执行的时候，花费的时间更短。但是指令所占空间更大（要指定目标和来源）2.Dalvik主要完成对象生命周期的管理，堆栈管理，线程管理，安全">
-<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img1">
-<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img2">
-<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img3">
-<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img4">
-<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img5">
-<meta property="og:updated_time" content="2017-12-28T08:43:28.006Z">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img1.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img2.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img3.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img4.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img5.png">
+<meta property="og:updated_time" content="2017-12-28T08:44:59.606Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android内存管理">
 <meta name="twitter:description" content="附录Android在4.4之前一直使用的Dalvik虚拟机作为App的运行VM的, 4.4中引入了ART作为开发者备选, 5.0起正式将ART作为默认VM了. Dalvik1.Dalvik基于寄存器  jvm基于栈，基于寄存器的虚拟机对于编译后变大的程序来说，在它执行的时候，花费的时间更短。但是指令所占空间更大（要指定目标和来源）2.Dalvik主要完成对象生命周期的管理，堆栈管理，线程管理，安全">
-<meta name="twitter:image" content="http://yoursite.com/2017/12/28/Android内存管理/img1">
+<meta name="twitter:image" content="http://yoursite.com/2017/12/28/Android内存管理/img1.png">
   
     <link rel="alternative" href="/atom.xml" title="" type="application/atom+xml">
   
@@ -180,11 +180,11 @@
         <p><a href="http://www.jianshu.com/p/48475df838d9" target="_blank" rel="noopener">附录</a><br>Android在4.4之前一直使用的Dalvik虚拟机作为App的运行VM的, 4.4中引入了ART作为开发者备选, 5.0起正式将ART作为默认VM了.</p>
 <h3 id="Dalvik"><a href="#Dalvik" class="headerlink" title="Dalvik"></a>Dalvik</h3><p>1.Dalvik基于寄存器  jvm基于栈，基于寄存器的虚拟机对于编译后变大的程序来说，在它执行的时候，花费的时间更短。但是指令所占空间更大（要指定目标和来源）<br>2.Dalvik主要完成对象生命周期的管理，堆栈管理，线程管理，安全和异常管理，负责进程隔离和线程管理，每一个android应用在底层都对应一个独立的dalvik虚拟机实例。代码在虚拟机的解释下执行。<br>3.dex文件可以减少整体文件尺寸，提高io查找速度<br>4.odex为了在运行的时候进一步提高性能。<br>5.所有的android应用的线程都对应一个linux线程，因此虚拟机可以更多地依赖操作系统的线程调度和管理机制<br>6.有一个特殊的虚拟机进程Zygote，它是虚拟机实例的孵化器，对于一些只读的系统库，所有虚拟机实例都和Zygote共享一块内存区域<br>7,Dalvik采用JIT（即时编译）技术，在应用程序启动时, JIT通过进行连续的性能分析来优化程序代码的执行, 在程序运行的过程中, Dalvik在不断的进行将字节码编译成机器码的工作</p>
 <h3 id="ART"><a href="#ART" class="headerlink" title="ART"></a>ART</h3><p>ART取自Android Run Time，为了提高安卓运行效率<br>1.引入AOT（ahead of time）预编译技术，在安装apk的过程中, ART会使用dex2oat程序所有的字节码预编译成了机器码. 应用程序运行过程中无需进行实时的编译工作, 只需要进行直接调用. 故而提高了应用程序的运行效率.</p>
-<h3 id="前台进程"><a href="#前台进程" class="headerlink" title="前台进程"></a>前台进程</h3><p><img src="/2017/12/28/Android内存管理/img1" alt="img1"></p>
-<h3 id="可见进程"><a href="#可见进程" class="headerlink" title="可见进程"></a>可见进程</h3><p><img src="/2017/12/28/Android内存管理/img2" alt="img2"></p>
-<p><img src="/2017/12/28/Android内存管理/img3" alt="img3"></p>
-<p><img src="/2017/12/28/Android内存管理/img4" alt="img4"></p>
-<p><img src="/2017/12/28/Android内存管理/img5" alt="img5"></p>
+<h3 id="前台进程"><a href="#前台进程" class="headerlink" title="前台进程"></a>前台进程</h3><p><img src="/2017/12/28/Android内存管理/img1.png" alt="img1"></p>
+<h3 id="可见进程"><a href="#可见进程" class="headerlink" title="可见进程"></a>可见进程</h3><p><img src="/2017/12/28/Android内存管理/img2.png" alt="img2"></p>
+<p><img src="/2017/12/28/Android内存管理/img3.png" alt="img3"></p>
+<p><img src="/2017/12/28/Android内存管理/img4.png" alt="img4"></p>
+<p><img src="/2017/12/28/Android内存管理/img5.png" alt="img5"></p>
 <p><a href="http://www.jianshu.com/p/080473ae050b" target="_blank" rel="noopener">内存分析工具</a></p>
 
       
