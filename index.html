@@ -149,6 +149,172 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Java-Garbage-Collector" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/28/Java-Garbage-Collector/">Java Garbage Collector</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/28/Java-Garbage-Collector/" class="archive-article-date">
+  	<time datetime="2017-12-28T08:07:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>GC 的职责<br>1.分配内存<br>2.确保有引用的对象保留在内存中<br>3.回收<strong><em>不能通过引用关系找到的对</em></strong>象的内存.</p>
+<p>JVM使用分代式的内存管理方式, 将Heap分成三代 — 新生代, 老一代, 持久代.<br>新生代分为Eden space, Survivor 0 和 Survivor 1 三个部分.<br>新生代对应小GC<br>老一代对应大GC<br>小GC执行频繁，大GC执行时间间隔一般是小GC十倍以上<br>大小GC都会中断程序运行</p>
+<p><strong><em>新创建的对象会被分配到新生代的Eden区域,若新生成的对象的空间大于XX:PretenureSizeThreshold时，则会直接被放入老年区<br>当Eden区域满时，小GC被触发<br>此时引用可达的对象将被移到surivior-0区域，年龄+1，引用不可达的对象将被直接删除<br>当Eden区域再次分配完后，小GC触发，引用可达的对象被移到surivior 1区域，年龄+1，同时surivior 0区域也执行小GC，释放引用不可达对象，然后将引用可达对象移到s1区域，年龄+1。此时，所有引用可达的对象都在s1区域，且s1区域的对象年龄不同。<br>当Eden再次满时，s0和s1角色互换，然后循环。即每次都会有一个区域被清空</em></strong></p>
+<p>新生代 复制算法：将现有的内存空间分为两快(s0、s1)，每次只使用其中一块，在垃圾回收时将正在使用的内存中的存活对象复制到未被使用的内存块中，之后，清除正在使用的内存块中的所有对象，交换两个内存的角色，完成垃圾回收。<br>老年代 标记-压缩算法 (Mark-Compact)：先需要从根节点开始对所有可达对象做一次标记，但之后，它并不简单地清理未标记的对象，而是将所有的存活对象压缩到内存的一端。之后，清理边界外所有的空间。这种方法既避免了碎片的产生，又不需要两块相同的内存空间，因此，其性价比比较高。<br>新生代对象会很快被回收，使用复制算法，空间换时间。<br>老年代对象存活更久，使用标记压缩算法，时间换空间。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/28/Java-Garbage-Collector/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-路线" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/28/路线/">路线</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/28/路线/" class="archive-article-date">
+  	<time datetime="2017-12-28T08:06:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>看官方文档,示例</p>
+<ul>
+<li>AIDL：熟悉AIDL，理解其工作原理，懂transact和onTransact的区别； </li>
+<li>Binder：从Java层大概理解Binder的工作原理，懂Parcel对象的使用； </li>
+<li>多进程：熟练掌握多进程的运行机制，懂Messenger、Socket等； </li>
+<li>事件分发：弹性滑动、滑动冲突等； </li>
+<li>玩转View：View的绘制原理、各种自定义View； </li>
+<li>动画系列：熟悉View动画和属性动画的不同点，懂属性动画的工作原理； </li>
+<li>懂性能优化、熟悉mat等工具 </li>
+<li><p>懂点常见的设计模式</p>
+</li>
+<li><p>搞懂view的滑动原理 </p>
+</li>
+<li>搞懂如何实现弹性滑动 </li>
+<li>搞懂view的滑动冲突 </li>
+<li>搞懂view的measure、layout和draw </li>
+<li>然后再学习几个已有的自定义view的例子 </li>
+<li>最后就可以搞定自定义view了，所谓万变不离其宗</li>
+</ul>
+<ol>
+<li>了解SystemServer的启动过程 </li>
+<li>了解主线程的消息循环模型 </li>
+<li>了解AMS和PMS的工作原理 </li>
+<li>能够回答问题”一个应用存在多少个Window？“ </li>
+<li>了解四大组件的大概工作流程 </li>
+<li>… </li>
+</ol>
+<ul>
+<li>基本知识点的细节 </li>
+</ul>
+<ol>
+<li>Activity的启动模式以及异常情况下不同Activity的表现 </li>
+<li>Service的onBind和onReBind的关联 </li>
+<li>onServiceDisconnected(ComponentName className)和binderDied()的区别 </li>
+<li>AsyncTask在不同版本上的表现细节 </li>
+<li>线程池的细节和参数配置 </li>
+<li>… </li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/28/路线/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-BaseAdapter源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -680,137 +846,9 @@
 
 
   
-    <article id="post-广播" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/25/广播/">广播</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/25/广播/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:56:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/25/广播/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-res-raw与assets区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/25/res-raw与assets区别/">res/raw与assets区别</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/25/res-raw与assets区别/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:55:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>相同点：<br>1.两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。<br>2.assets目录下可以新建目录，而res/raw目录则不可以。<br>不同点：<br>1.由于raw是Resources (res)的子目录，Android会自动的为这目录中的所有资源文件生成一个ID，这个ID会被存储在R类当中，作为一个文件的引用。这意味着这个资源文件可以很容易的被Android的类和方法访问到，甚至在Android XML文件中你也可以以@raw/的形式引用到它。在Android中，使用ID是访问一个文件最快捷的方式。MP3和Ogg文件放在这个目录下是比较合适的。<br>2.assets目录更像一个附录类型的目录，Android不会为这个目录中的文件生成ID并保存在R类当中，因此它与Android中的一些类和方法兼容度更低。同时，由于你需要一个字符串路径来获取这个目录下的文件描述符，访问的速度会更慢。但是把一些文件放在这个目录下会使一些操作更加方便，比方说拷贝一个数据库文件到系统内存中。要注意的是，你无法在Android XML文件中引用到assets目录下的文件，只能通过AssetManager来访问这些文件。数据库文件和游戏数据等放在这个目录下是比较合适的。<br>使用：<br>比如给ImageView设置一张图片<br>res/raw:<br>假设图片路径:res/raw/demo.jpg</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),R.raw.demo);  </span><br><span class="line">            iv_show.setImageBitmap(bitmap);  </span><br><span class="line">            bitmap = null;</span><br></pre></td></tr></table></figure>
-<p>或者：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">InputStream is = this.getResources().openRawResource(R.raw.demo);  </span><br><span class="line">            Bitmap image = BitmapFactory.decodeStream(is);  </span><br><span class="line">            iv_show.setImageBitmap(image);  </span><br><span class="line">            image = null;</span><br></pre></td></tr></table></figure></p>
-<p>assets:<br>假设图片路径：assets/image/image.jpg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">AssetManager manager = this.getAssets();  </span><br><span class="line">            try  </span><br><span class="line">            &#123;  </span><br><span class="line">                InputStream in = manager.open(&quot;image/image.jpg&quot;);//注意路径  </span><br><span class="line">                Bitmap bitmap = BitmapFactory.decodeStream(in);  </span><br><span class="line">                iv_show.setImageBitmap(bitmap);  </span><br><span class="line">                bitmap = null;  </span><br><span class="line">                System.gc();  </span><br><span class="line">            &#125; catch (IOException e)  </span><br><span class="line">            &#123;  </span><br><span class="line">                e.printStackTrace();  </span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/25/res-raw与assets区别/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 

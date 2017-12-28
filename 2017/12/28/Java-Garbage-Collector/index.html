@@ -6,14 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2017 | </title>
+  <title>Java Garbage Collector | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title">
-<meta property="og:url" content="http://yoursite.com/archives/2017/page/2/index.html">
+  <meta name="description" content="GC 的职责1.分配内存2.确保有引用的对象保留在内存中3.回收不能通过引用关系找到的对象的内存. JVM使用分代式的内存管理方式, 将Heap分成三代 — 新生代, 老一代, 持久代.新生代分为Eden space, Survivor 0 和 Survivor 1 三个部分.新生代对应小GC老一代对应大GC小GC执行频繁，大GC执行时间间隔一般是小GC十倍以上大小GC都会中断程序运行 新创建的对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Garbage Collector">
+<meta property="og:url" content="http://yoursite.com/2017/12/28/Java-Garbage-Collector/index.html">
 <meta property="og:site_name">
+<meta property="og:description" content="GC 的职责1.分配内存2.确保有引用的对象保留在内存中3.回收不能通过引用关系找到的对象的内存. JVM使用分代式的内存管理方式, 将Heap分成三代 — 新生代, 老一代, 持久代.新生代分为Eden space, Survivor 0 和 Survivor 1 三个部分.新生代对应小GC老一代对应大GC小GC执行频繁，大GC执行时间间隔一般是小GC十倍以上大小GC都会中断程序运行 新创建的对">
+<meta property="og:updated_time" content="2017-12-28T08:08:34.293Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title">
+<meta name="twitter:title" content="Java Garbage Collector">
+<meta name="twitter:description" content="GC 的职责1.分配内存2.确保有引用的对象保留在内存中3.回收不能通过引用关系找到的对象的内存. JVM使用分代式的内存管理方式, 将Heap分成三代 — 新生代, 老一代, 持久代.新生代分为Eden space, Survivor 0 和 Survivor 1 三个部分.新生代对应小GC老一代对应大GC小GC执行频繁，大GC执行时间间隔一般是小GC十倍以上大小GC都会中断程序运行 新创建的对">
   
     <link rel="alternative" href="/atom.xml" title="" type="application/atom+xml">
   
@@ -147,295 +151,86 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Java-Garbage-Collector" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java Garbage Collector
+    </h1>
+  
+
+        
+        <a href="/2017/12/28/Java-Garbage-Collector/" class="archive-article-date">
+  	<time datetime="2017-12-28T08:07:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>GC 的职责<br>1.分配内存<br>2.确保有引用的对象保留在内存中<br>3.回收<strong><em>不能通过引用关系找到的对</em></strong>象的内存.</p>
+<p>JVM使用分代式的内存管理方式, 将Heap分成三代 — 新生代, 老一代, 持久代.<br>新生代分为Eden space, Survivor 0 和 Survivor 1 三个部分.<br>新生代对应小GC<br>老一代对应大GC<br>小GC执行频繁，大GC执行时间间隔一般是小GC十倍以上<br>大小GC都会中断程序运行</p>
+<p><strong><em>新创建的对象会被分配到新生代的Eden区域,若新生成的对象的空间大于XX:PretenureSizeThreshold时，则会直接被放入老年区<br>当Eden区域满时，小GC被触发<br>此时引用可达的对象将被移到surivior-0区域，年龄+1，引用不可达的对象将被直接删除<br>当Eden区域再次分配完后，小GC触发，引用可达的对象被移到surivior 1区域，年龄+1，同时surivior 0区域也执行小GC，释放引用不可达对象，然后将引用可达对象移到s1区域，年龄+1。此时，所有引用可达的对象都在s1区域，且s1区域的对象年龄不同。<br>当Eden再次满时，s0和s1角色互换，然后循环。即每次都会有一个区域被清空</em></strong></p>
+<p>新生代 复制算法：将现有的内存空间分为两快(s0、s1)，每次只使用其中一块，在垃圾回收时将正在使用的内存中的存活对象复制到未被使用的内存块中，之后，清除正在使用的内存块中的所有对象，交换两个内存的角色，完成垃圾回收。<br>老年代 标记-压缩算法 (Mark-Compact)：先需要从根节点开始对所有可达对象做一次标记，但之后，它并不简单地清理未标记的对象，而是将所有的存活对象压缩到内存的一端。之后，清理边界外所有的空间。这种方法既避免了碎片的产生，又不需要两块相同的内存空间，因此，其性价比比较高。<br>新生代对象会很快被回收，使用复制算法，空间换时间。<br>老年代对象存活更久，使用标记压缩算法，时间换空间。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/广播/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:56:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/广播/">广播</a>
-    </h1>
-  
+      
 
-        <div class="article-info info-on-right">
-          
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/res-raw与assets区别/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:55:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2017/12/28/路线/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">路线</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/res-raw与assets区别/">res/raw与assets区别</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/内容提供者/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:52:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/内容提供者/">内容提供者</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/java注解/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:38:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/java注解/">java注解</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/Loader/" class="archive-article-date">
-  	<time datetime="2017-12-21T09:47:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/Loader/">Loader</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/hello-world/" class="archive-article-date">
-  	<time datetime="2017-12-21T06:55:29.956Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/hello-world/">MarkDown语法提示</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/代理模式/" class="archive-article-date">
-  	<time datetime="2017-12-21T03:37:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/代理模式/">代理模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/降低项目耦合度的办法/" class="archive-article-date">
-  	<time datetime="2017-12-21T03:33:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/降低项目耦合度的办法/">降低项目耦合度的办法</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/关于io/" class="archive-article-date">
-  	<time datetime="2017-12-21T03:10:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/关于io/">关于io</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/MarkDown语法提示/" class="archive-article-date">
-  	<time datetime="2017-12-21T02:14:16.131Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/MarkDown语法提示/">Hello World</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2017/">&laquo; Prev</a><a class="page-number" href="/archives/2017/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2017/page/3/">3</a><a class="extend next" rel="next" href="/archives/2017/page/3/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -459,8 +254,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
