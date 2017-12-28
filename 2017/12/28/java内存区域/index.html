@@ -16,7 +16,9 @@
 <meta property="og:description" content="JVM运行程序的时候内存会被分为若干个区域，如下图 其中，方法区和堆内存是所有线程共享数据的区域，栈和程序计数器都是每个线程独立 程序计数器简述程序计数器（program counter register）只占用了一块比较小的内存空间，至于小到什么程度呢，这样说吧，有时可以忽略不计的。 作用可以看作是当前线程所执行的字节码文件（class）的行号指示器。在虚拟机的世界中，字节码解释器就是通过改变计">
 <meta property="og:image" content="http://yoursite.com/2017/12/28/java内存区域/img1.png">
 <meta property="og:image" content="http://yoursite.com/2017/12/28/java内存区域/img2.png">
-<meta property="og:updated_time" content="2017-12-28T09:16:35.714Z">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/java内存区域/img3.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/java内存区域/img4.png">
+<meta property="og:updated_time" content="2017-12-28T09:54:52.780Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java内存区域">
 <meta name="twitter:description" content="JVM运行程序的时候内存会被分为若干个区域，如下图 其中，方法区和堆内存是所有线程共享数据的区域，栈和程序计数器都是每个线程独立 程序计数器简述程序计数器（program counter register）只占用了一块比较小的内存空间，至于小到什么程度呢，这样说吧，有时可以忽略不计的。 作用可以看作是当前线程所执行的字节码文件（class）的行号指示器。在虚拟机的世界中，字节码解释器就是通过改变计">
@@ -181,6 +183,13 @@
 <p>特性<br>因为处理器在一个确定是时刻只会执行一个线程中的指令，线程切换后，是通过计数器来记录执行痕迹的，因而可以看出，程序计数器是每个线程私有的。<br>如果执行的是java方法，那么记录的是正在执行的虚拟机字节码指令的地址的地址，如果是native方法，计数器的值为空（undefined）。<br>这个内存区域是唯一一个在java虚拟界规范中没有规定任何OutOfMemoryError的情况的区域。</p>
 <h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><p>虚拟机栈也是线程私有的，生命周期与线程相同。这个栈描述的是java方法执行的内存模型，每个方法被执行的时候都会同时创建一个栈帧，栈帧用于存储局部变量表，操作数栈，动态链接，操作出口，方法出口等信息。每个方法被调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程。<br>下图描述的是栈帧的结构：<br><img src="/2017/12/28/java内存区域/img2.png" alt="img2"></p>
 <h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>与虚拟机栈所发挥的作用一致，其区别就是虚拟机栈为虚拟机执行java方法服务，而本地方法栈则是为虚拟机中所使用到的native方法服务。由于虚拟机规范中对本地方法栈中的方法使用的语言，使用方式与数据结构并没有强制规定，所以具体的虚拟机可以自由实现它，有的虚拟机中直接将本地方法栈和虚拟机栈合二为一。</p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>java堆是jvm所管理的内存中最大的一块，java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。此内存区域的唯一目的就是存放对象实例，几乎所有的对象实例都在这里分配内存。另外，java堆是垃圾回收器管理的主要区域，因此很多时候被称为gc堆。关于垃圾回收见<a href="https://dk233333.github.io/2017/12/28/Java-Garbage-Collector/" target="_blank" rel="noopener">这篇博客</a></p>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>跟java堆一样，是各个线程共享的区域。它用于存储已被虚拟机加载的类信息，常量，静态变量，即时编译器编译后的代码等数据。java虚拟机规范将其描述为堆的一个逻辑部分。<br>运行时常量池：常量池是方法区的一部分，Class文件中除了有类的版本，字段，方法，接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。</p>
+<p>示例：<br>当我们写下这行代码时：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object obj = new Object();</span><br></pre></td></tr></table></figure>
+<p>其实涉及到了java栈，堆，方法区这三个最重要的内存区域。<br>Object obj这部分的语义将会被映射到java栈的本地变量表中，作为一个reference类型数据出现。而new Object()部分则会反映到java堆中，另外，在java堆中还必须包含能查找到此对象类型数据（如对象类型，父类，方法等）的地址信息，这些类型数据存储在方法区中。<br>由于reference类型在java虚拟机规范里面只规定了一个指向对象的引用，并没有定义这个引用应该通过哪种方式去定位，以及访问到java堆中对象的具体位置，因此，不同虚拟机实现的对象访问方式会有所不同，主流的访问方式有两种：使用句柄和直接指针。<br>1.如果使用句柄访问方式，java堆将会划分出一块内存来作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据和类型数据的具体地址信息（方法区中）：<br><img src="/2017/12/28/java内存区域/img3.png" alt="img3"></p>
+<p>2.如果使用直接指针访问方式，java堆对象的布局中就必须考虑如何防止访问类型数据的相关信息，reference中直接存储的就是对象地址。</p>
+<p><img src="/2017/12/28/java内存区域/img4.png" alt="img4"></p>
 
       
 
