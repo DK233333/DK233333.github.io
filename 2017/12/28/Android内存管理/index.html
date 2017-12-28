@@ -6,14 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title></title>
+  <title>Android内存管理 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="附录Android在4.4之前一直使用的Dalvik虚拟机作为App的运行VM的, 4.4中引入了ART作为开发者备选, 5.0起正式将ART作为默认VM了. Dalvik1.Dalvik基于寄存器  jvm基于栈，基于寄存器的虚拟机对于编译后变大的程序来说，在它执行的时候，花费的时间更短。但是指令所占空间更大（要指定目标和来源）2.Dalvik主要完成对象生命周期的管理，堆栈管理，线程管理，安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android内存管理">
+<meta property="og:url" content="http://yoursite.com/2017/12/28/Android内存管理/index.html">
 <meta property="og:site_name">
+<meta property="og:description" content="附录Android在4.4之前一直使用的Dalvik虚拟机作为App的运行VM的, 4.4中引入了ART作为开发者备选, 5.0起正式将ART作为默认VM了. Dalvik1.Dalvik基于寄存器  jvm基于栈，基于寄存器的虚拟机对于编译后变大的程序来说，在它执行的时候，花费的时间更短。但是指令所占空间更大（要指定目标和来源）2.Dalvik主要完成对象生命周期的管理，堆栈管理，线程管理，安全">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img1">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img2">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img3">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img4">
+<meta property="og:image" content="http://yoursite.com/2017/12/28/Android内存管理/img5">
+<meta property="og:updated_time" content="2017-12-28T08:43:28.006Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title">
+<meta name="twitter:title" content="Android内存管理">
+<meta name="twitter:description" content="附录Android在4.4之前一直使用的Dalvik虚拟机作为App的运行VM的, 4.4中引入了ART作为开发者备选, 5.0起正式将ART作为默认VM了. Dalvik1.Dalvik基于寄存器  jvm基于栈，基于寄存器的虚拟机对于编译后变大的程序来说，在它执行的时候，花费的时间更短。但是指令所占空间更大（要指定目标和来源）2.Dalvik主要完成对象生命周期的管理，堆栈管理，线程管理，安全">
+<meta name="twitter:image" content="http://yoursite.com/2017/12/28/Android内存管理/img1">
   
     <link rel="alternative" href="/atom.xml" title="" type="application/atom+xml">
   
@@ -147,16 +157,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Android内存管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Android内存管理" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/Android内存管理/">Android内存管理</a>
+    <h1 class="article-title" itemprop="name">
+      Android内存管理
     </h1>
   
 
@@ -189,16 +197,24 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/Android内存管理/">展开全文 >></a>
-        </p>
-      
 
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2017/12/28/内存泄漏和内存溢出/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">内存泄漏和内存溢出</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -218,633 +234,14 @@
 
 
 
-
-  
-    <article id="post-内存泄漏和内存溢出" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/内存泄漏和内存溢出/">内存泄漏和内存溢出</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/内存泄漏和内存溢出/" class="archive-article-date">
-  	<time datetime="2017-12-28T08:35:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>内存泄漏指程序动态分配的内存由于某些原因无法释放，造成内存浪费，导致程序运行速度变慢甚至崩溃</p>
-<p>内存溢出指程序申请的内存超出虚拟机给程序分配的最大可用内存。程序发生OOM并不代表RAM不足，而是因为程序申请的对象大小超过了dalvik虚拟机的允许最大值。RAM不足时系统会杀死别的进程来释放内存。</p>
-<p><img src="/2017/12/28/内存泄漏和内存溢出/img1.png" alt="附图1"></p>
-<p>bitmap分配在dalvik heap、上，而不是native heap</p>
-<p><a href="http://blog.csdn.net/gemmem/article/details/8920039" target="_blank" rel="noopener">附录</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/内存泄漏和内存溢出/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Java-Garbage-Collector" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/Java-Garbage-Collector/">Java Garbage Collector</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/Java-Garbage-Collector/" class="archive-article-date">
-  	<time datetime="2017-12-28T08:07:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>GC 的职责<br>1.分配内存<br>2.确保有引用的对象保留在内存中<br>3.回收<strong><em>不能通过引用关系找到的对</em></strong>象的内存.</p>
-<p>JVM使用分代式的内存管理方式, 将Heap分成三代 — 新生代, 老一代, 持久代.<br>新生代分为Eden space, Survivor 0 和 Survivor 1 三个部分.<br>新生代对应小GC<br>老一代对应大GC<br>小GC执行频繁，大GC执行时间间隔一般是小GC十倍以上<br>大小GC都会中断程序运行</p>
-<p><strong><em>新创建的对象会被分配到新生代的Eden区域,若新生成的对象的空间大于XX:PretenureSizeThreshold时，则会直接被放入老年区<br>当Eden区域满时，小GC被触发<br>此时引用可达的对象将被移到surivior-0区域，年龄+1，引用不可达的对象将被直接删除<br>当Eden区域再次分配完后，小GC触发，引用可达的对象被移到surivior 1区域，年龄+1，同时surivior 0区域也执行小GC，释放引用不可达对象，然后将引用可达对象移到s1区域，年龄+1。此时，所有引用可达的对象都在s1区域，且s1区域的对象年龄不同。<br>当Eden再次满时，s0和s1角色互换，然后循环。即每次都会有一个区域被清空</em></strong></p>
-<p>新生代 复制算法：将现有的内存空间分为两快(s0、s1)，每次只使用其中一块，在垃圾回收时将正在使用的内存中的存活对象复制到未被使用的内存块中，之后，清除正在使用的内存块中的所有对象，交换两个内存的角色，完成垃圾回收。<br>老年代 标记-压缩算法 (Mark-Compact)：先需要从根节点开始对所有可达对象做一次标记，但之后，它并不简单地清理未标记的对象，而是将所有的存活对象压缩到内存的一端。之后，清理边界外所有的空间。这种方法既避免了碎片的产生，又不需要两块相同的内存空间，因此，其性价比比较高。<br>新生代对象会很快被回收，使用复制算法，空间换时间。<br>老年代对象存活更久，使用标记压缩算法，时间换空间。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/Java-Garbage-Collector/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-路线" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/路线/">路线</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/路线/" class="archive-article-date">
-  	<time datetime="2017-12-28T08:06:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>看官方文档,示例</p>
-<ul>
-<li>AIDL：熟悉AIDL，理解其工作原理，懂transact和onTransact的区别； </li>
-<li>Binder：从Java层大概理解Binder的工作原理，懂Parcel对象的使用； </li>
-<li>多进程：熟练掌握多进程的运行机制，懂Messenger、Socket等； </li>
-<li>事件分发：弹性滑动、滑动冲突等； </li>
-<li>玩转View：View的绘制原理、各种自定义View； </li>
-<li>动画系列：熟悉View动画和属性动画的不同点，懂属性动画的工作原理； </li>
-<li>懂性能优化、熟悉mat等工具 </li>
-<li><p>懂点常见的设计模式</p>
-</li>
-<li><p>搞懂view的滑动原理 </p>
-</li>
-<li>搞懂如何实现弹性滑动 </li>
-<li>搞懂view的滑动冲突 </li>
-<li>搞懂view的measure、layout和draw </li>
-<li>然后再学习几个已有的自定义view的例子 </li>
-<li>最后就可以搞定自定义view了，所谓万变不离其宗</li>
-</ul>
-<ol>
-<li>了解SystemServer的启动过程 </li>
-<li>了解主线程的消息循环模型 </li>
-<li>了解AMS和PMS的工作原理 </li>
-<li>能够回答问题”一个应用存在多少个Window？“ </li>
-<li>了解四大组件的大概工作流程 </li>
-<li>… </li>
-</ol>
-<ul>
-<li>基本知识点的细节 </li>
-</ul>
-<ol>
-<li>Activity的启动模式以及异常情况下不同Activity的表现 </li>
-<li>Service的onBind和onReBind的关联 </li>
-<li>onServiceDisconnected(ComponentName className)和binderDied()的区别 </li>
-<li>AsyncTask在不同版本上的表现细节 </li>
-<li>线程池的细节和参数配置 </li>
-<li>… </li>
-</ol>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/路线/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-BaseAdapter源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/27/BaseAdapter源码分析/">BaseAdapter源码分析</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/27/BaseAdapter源码分析/" class="archive-article-date">
-  	<time datetime="2017-12-27T09:33:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/27/BaseAdapter源码分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Handler源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/Handler源码分析/">Handler源码分析</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/Handler源码分析/" class="archive-article-date">
-  	<time datetime="2017-12-26T09:55:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Handler用于线程之间通信。<br>可以通过post和sendXXXMessage的方式从当前线程朝目标线程（默认是Handler创建的线程）发送消息。</p>
-<p>首先看一下post方法和sendXXXMessage方法,这些发送消息的方法（调用的时候一般在其他线程），最终走的都是sendMessageAtTime方法，其中post方法会新建一个Message实例。</p>
-<p>enqueueMessage中消息被放到目标线程的消息队列中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public final boolean post(Runnable r)</span><br><span class="line">    &#123;</span><br><span class="line">       return  sendMessageDelayed(getPostMessage(r), 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">private static Message getPostMessage(Runnable r) &#123;</span><br><span class="line">        Message m = Message.obtain();</span><br><span class="line">        m.callback = r;</span><br><span class="line">        return m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">public final boolean sendMessage(Message msg)</span><br><span class="line">    &#123;</span><br><span class="line">        return sendMessageDelayed(msg, 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">public final boolean sendMessageDelayed(Message msg, long delayMillis)</span><br><span class="line">    &#123;</span><br><span class="line">        if (delayMillis &lt; 0) &#123;</span><br><span class="line">            delayMillis = 0;</span><br><span class="line">        &#125;</span><br><span class="line">        return sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">public boolean sendMessageAtTime(Message msg, long uptimeMillis) &#123;</span><br><span class="line">        MessageQueue queue = mQueue;</span><br><span class="line">        if (queue == null) &#123;</span><br><span class="line">            RuntimeException e = new RuntimeException(</span><br><span class="line">                    this + &quot; sendMessageAtTime() called with no mQueue&quot;);</span><br><span class="line">            Log.w(&quot;Looper&quot;, e.getMessage(), e);</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        return enqueueMessage(queue, msg, uptimeMillis);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>在Looper的loop方法中，处理了消息。调用了handler的dispatchMessage方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">public static void loop() &#123;</span><br><span class="line">        final Looper me = myLooper();</span><br><span class="line">        if (me == null) &#123;</span><br><span class="line">            throw new RuntimeException(&quot;No Looper; Looper.prepare() wasn&apos;t called on this thread.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        final MessageQueue queue = me.mQueue;</span><br><span class="line"></span><br><span class="line">        // Make sure the identity of this thread is that of the local process,</span><br><span class="line">        // and keep track of what that identity token actually is.</span><br><span class="line">        Binder.clearCallingIdentity();</span><br><span class="line">        final long ident = Binder.clearCallingIdentity();</span><br><span class="line"></span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            Message msg = queue.next(); // might block</span><br><span class="line">            if (msg == null) &#123;</span><br><span class="line">                // No message indicates that the message queue is quitting.</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // This must be in a local variable, in case a UI event sets the logger</span><br><span class="line">            final Printer logging = me.mLogging;</span><br><span class="line">            if (logging != null) &#123;</span><br><span class="line">                logging.println(&quot;&gt;&gt;&gt;&gt;&gt; Dispatching to &quot; + msg.target + &quot; &quot; +</span><br><span class="line">                        msg.callback + &quot;: &quot; + msg.what);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            final long traceTag = me.mTraceTag;</span><br><span class="line">            if (traceTag != 0 &amp;&amp; Trace.isTagEnabled(traceTag)) &#123;</span><br><span class="line">                Trace.traceBegin(traceTag, msg.target.getTraceName(msg));</span><br><span class="line">            &#125;</span><br><span class="line">            try &#123;</span><br><span class="line">                msg.target.dispatchMessage(msg);</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                if (traceTag != 0) &#123;</span><br><span class="line">                    Trace.traceEnd(traceTag);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (logging != null) &#123;</span><br><span class="line">                logging.println(&quot;&lt;&lt;&lt;&lt;&lt; Finished to &quot; + msg.target + &quot; &quot; + msg.callback);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // Make sure that during the course of dispatching the</span><br><span class="line">            // identity of the thread wasn&apos;t corrupted.</span><br><span class="line">            final long newIdent = Binder.clearCallingIdentity();</span><br><span class="line">            if (ident != newIdent) &#123;</span><br><span class="line">                Log.wtf(TAG, &quot;Thread identity changed from 0x&quot;</span><br><span class="line">                        + Long.toHexString(ident) + &quot; to 0x&quot;</span><br><span class="line">                        + Long.toHexString(newIdent) + &quot; while dispatching to &quot;</span><br><span class="line">                        + msg.target.getClass().getName() + &quot; &quot;</span><br><span class="line">                        + msg.callback + &quot; what=&quot; + msg.what);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            msg.recycleUnchecked();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/Handler源码分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-AsyncTask源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/AsyncTask源码分析/">AsyncTask源码分析</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/AsyncTask源码分析/" class="archive-article-date">
-  	<time datetime="2017-12-26T07:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>从excute方法开始,参数由用户传入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * Executes the task with the specified parameters. The task returns</span><br><span class="line">     * itself (this) so that the caller can keep a reference to it.</span><br><span class="line">     * </span><br><span class="line">     * &lt;p&gt;Note: this function schedules the task on a queue for a single background</span><br><span class="line">     * thread or pool of threads depending on the platform version.  When first</span><br><span class="line">     * introduced, AsyncTasks were executed serially on a single background thread.</span><br><span class="line">     * Starting with &#123;@link android.os.Build.VERSION_CODES#DONUT&#125;, this was changed</span><br><span class="line">     * to a pool of threads allowing multiple tasks to operate in parallel. Starting</span><br><span class="line">     * &#123;@link android.os.Build.VERSION_CODES#HONEYCOMB&#125;, tasks are back to being</span><br><span class="line">     * executed on a single thread to avoid common application errors caused</span><br><span class="line">     * by parallel execution.  If you truly want parallel execution, you can use</span><br><span class="line">     * the &#123;@link #executeOnExecutor&#125; version of this method</span><br><span class="line">     * with &#123;@link #THREAD_POOL_EXECUTOR&#125;; however, see commentary there for warnings</span><br><span class="line">     * on its use.</span><br><span class="line">     *</span><br><span class="line">     * &lt;p&gt;This method must be invoked on the UI thread.</span><br><span class="line">     *</span><br><span class="line">     * @param params The parameters of the task.</span><br><span class="line">     *</span><br><span class="line">     * @return This instance of AsyncTask.</span><br><span class="line">     *</span><br><span class="line">     * @throws IllegalStateException If &#123;@link #getStatus()&#125; returns either</span><br><span class="line">     *         &#123;@link AsyncTask.Status#RUNNING&#125; or &#123;@link AsyncTask.Status#FINISHED&#125;.</span><br><span class="line">     *</span><br><span class="line">     * @see #executeOnExecutor(java.util.concurrent.Executor, Object[])</span><br><span class="line">     * @see #execute(Runnable)</span><br><span class="line">     */</span><br><span class="line">    @MainThread</span><br><span class="line">    public final AsyncTask&lt;Params, Progress, Result&gt; execute(Params... params) &#123;</span><br><span class="line">        return executeOnExecutor(sDefaultExecutor, params);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>接着调用executeOnExecutor方法。主要内容是，判断异常状态，给现有状态赋值，调用抽象方法onPreExecute，给mWorker.mParams赋值，执行sDefaultExecutor，参数是mFuture（SerialExecutor的excute方法）<br>sDefaultExecutor是SerialExecutor的一个实例,可以通过setDefaultExecutor来改变该值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@MainThread</span><br><span class="line">    public final AsyncTask&lt;Params, Progress, Result&gt; executeOnExecutor(Executor exec,</span><br><span class="line">            Params... params) &#123;</span><br><span class="line">        if (mStatus != Status.PENDING) &#123;</span><br><span class="line">            switch (mStatus) &#123;</span><br><span class="line">                case RUNNING:</span><br><span class="line">                    throw new IllegalStateException(&quot;Cannot execute task:&quot;</span><br><span class="line">                            + &quot; the task is already running.&quot;);</span><br><span class="line">                case FINISHED:</span><br><span class="line">                    throw new IllegalStateException(&quot;Cannot execute task:&quot;</span><br><span class="line">                            + &quot; the task has already been executed &quot;</span><br><span class="line">                            + &quot;(a task can be executed only once)&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mStatus = Status.RUNNING;</span><br><span class="line"></span><br><span class="line">        onPreExecute();</span><br><span class="line"></span><br><span class="line">        mWorker.mParams = params;</span><br><span class="line">        exec.execute(mFuture);</span><br><span class="line"></span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>再来看看mFuture，在构造方法中，定义了mWorker和mFuture。mFuture是Runnable的子类，mWorker是Callable的子类。<br>mWorker当做参数传入了mFuture的构造方法中。<br>下面看一下mFuture的构造方法和get方法以及run方法分别做了什么事情。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">public AsyncTask() &#123;</span><br><span class="line">        mWorker = new WorkerRunnable&lt;Params, Result&gt;() &#123;</span><br><span class="line">            public Result call() throws Exception &#123;</span><br><span class="line">                mTaskInvoked.set(true);</span><br><span class="line">                Result result = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line">                    //noinspection unchecked</span><br><span class="line">                    result = doInBackground(mParams);</span><br><span class="line">                    Binder.flushPendingCommands();</span><br><span class="line">                &#125; catch (Throwable tr) &#123;</span><br><span class="line">                    mCancelled.set(true);</span><br><span class="line">                    throw tr;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    postResult(result);</span><br><span class="line">                &#125;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        mFuture = new FutureTask&lt;Result&gt;(mWorker) &#123;</span><br><span class="line">            @Override</span><br><span class="line">            protected void done() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    postResultIfNotInvoked(get());</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    android.util.Log.w(LOG_TAG, e);</span><br><span class="line">                &#125; catch (ExecutionException e) &#123;</span><br><span class="line">                    throw new RuntimeException(&quot;An error occurred while executing doInBackground()&quot;,</span><br><span class="line">                            e.getCause());</span><br><span class="line">                &#125; catch (CancellationException e) &#123;</span><br><span class="line">                    postResultIfNotInvoked(null);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">private void postResultIfNotInvoked(Result result) &#123;</span><br><span class="line">        final boolean wasTaskInvoked = mTaskInvoked.get();</span><br><span class="line">        if (!wasTaskInvoked) &#123;</span><br><span class="line">            postResult(result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>构造方法中给callable赋值，也就是把传进来的mWorker保存为成员变量。<br>get方法貌似是做结果回调的。<br>run方法会在上面提到的executeOnExecutor方法中被调用。而在run方法中，Callable<v> c = callable;，result = c.call()。mWorker最终是在这里被调用。<br>也就是在AsyncTask的executeOnExecutor方法中被调用。当调用结束时，结果通过done方法返回。</v></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public FutureTask(Callable&lt;V&gt; callable) &#123;</span><br><span class="line">        if (callable == null)</span><br><span class="line">            throw new NullPointerException();</span><br><span class="line">        this.callable = callable;</span><br><span class="line">        this.state = NEW;       // ensure visibility of callable</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public V get() throws InterruptedException, ExecutionException &#123;</span><br><span class="line">        int s = state;</span><br><span class="line">        if (s &lt;= COMPLETING)</span><br><span class="line">            s = awaitDone(false, 0L);</span><br><span class="line">        return report(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public void run() &#123;</span><br><span class="line">        if (state != NEW ||</span><br><span class="line">            !U.compareAndSwapObject(this, RUNNER, null, Thread.currentThread()))</span><br><span class="line">            return;</span><br><span class="line">        try &#123;</span><br><span class="line">            Callable&lt;V&gt; c = callable;</span><br><span class="line">            if (c != null &amp;&amp; state == NEW) &#123;</span><br><span class="line">                V result;</span><br><span class="line">                boolean ran;</span><br><span class="line">                try &#123;</span><br><span class="line">                    result = c.call();</span><br><span class="line">                    ran = true;</span><br><span class="line">                &#125; catch (Throwable ex) &#123;</span><br><span class="line">                    result = null;</span><br><span class="line">                    ran = false;</span><br><span class="line">                    setException(ex);</span><br><span class="line">                &#125;</span><br><span class="line">                if (ran)</span><br><span class="line">                    set(result);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            // runner must be non-null until state is settled to</span><br><span class="line">            // prevent concurrent calls to run()</span><br><span class="line">            runner = null;</span><br><span class="line">            // state must be re-read after nulling runner to prevent</span><br><span class="line">            // leaked interrupts</span><br><span class="line">            int s = state;</span><br><span class="line">            if (s &gt;= INTERRUPTING)</span><br><span class="line">                handlePossibleCancellationInterrupt(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>而我们实现的doInBackground方法，则是在mWorker的call方法中调用。这里的结果result最终是给了上一段代码中的result，走的是mFuture的结果回调。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mWorker = new WorkerRunnable&lt;Params, Result&gt;() &#123;</span><br><span class="line">            public Result call() throws Exception &#123;</span><br><span class="line">                mTaskInvoked.set(true);</span><br><span class="line">                Result result = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line">                    //noinspection unchecked</span><br><span class="line">                    result = doInBackground(mParams);</span><br><span class="line">                    Binder.flushPendingCommands();</span><br><span class="line">                &#125; catch (Throwable tr) &#123;</span><br><span class="line">                    mCancelled.set(true);</span><br><span class="line">                    throw tr;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    postResult(result);</span><br><span class="line">                &#125;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
-<p>关于线程切换<br>所有的任务其实真正由THREAD_POOL_EXECUTOR来完成线程的切换和线程的管理。THREAD_POOL_EXECUTOR被初始化为ThreadPoolExecutor的实例。<br>结果回调在postResult方法中用handler回到主线程。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public static final Executor THREAD_POOL_EXECUTOR;</span><br><span class="line"></span><br><span class="line">static &#123;</span><br><span class="line">        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(</span><br><span class="line">                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,</span><br><span class="line">                sPoolWorkQueue, sThreadFactory);</span><br><span class="line">        threadPoolExecutor.allowCoreThreadTimeOut(true);</span><br><span class="line">        THREAD_POOL_EXECUTOR = threadPoolExecutor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">private static class SerialExecutor implements Executor &#123;</span><br><span class="line">        final ArrayDeque&lt;Runnable&gt; mTasks = new ArrayDeque&lt;Runnable&gt;();</span><br><span class="line">        Runnable mActive;</span><br><span class="line"></span><br><span class="line">        public synchronized void execute(final Runnable r) &#123;</span><br><span class="line">            mTasks.offer(new Runnable() &#123;</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        r.run();</span><br><span class="line">                    &#125; finally &#123;</span><br><span class="line">                        scheduleNext();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            if (mActive == null) &#123;</span><br><span class="line">                scheduleNext();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        protected synchronized void scheduleNext() &#123;</span><br><span class="line">            if ((mActive = mTasks.poll()) != null) &#123;</span><br><span class="line">                THREAD_POOL_EXECUTOR.execute(mActive);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/AsyncTask源码分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-webview" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/webview/">webview</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/webview/" class="archive-article-date">
-  	<time datetime="2017-12-26T06:59:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/webview/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-图片处理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/图片处理/">图片处理</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/图片处理/" class="archive-article-date">
-  	<time datetime="2017-12-26T03:13:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/图片处理/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-service" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/service/">service</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/service/" class="archive-article-date">
-  	<time datetime="2017-12-26T03:08:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/service/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -867,8 +264,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
