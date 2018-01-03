@@ -149,6 +149,140 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-AsyncTask源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/26/AsyncTask源码分析/">AsyncTask源码分析</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/26/AsyncTask源码分析/" class="archive-article-date">
+  	<time datetime="2017-12-26T07:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>从excute方法开始,参数由用户传入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * Executes the task with the specified parameters. The task returns</span><br><span class="line">     * itself (this) so that the caller can keep a reference to it.</span><br><span class="line">     * </span><br><span class="line">     * &lt;p&gt;Note: this function schedules the task on a queue for a single background</span><br><span class="line">     * thread or pool of threads depending on the platform version.  When first</span><br><span class="line">     * introduced, AsyncTasks were executed serially on a single background thread.</span><br><span class="line">     * Starting with &#123;@link android.os.Build.VERSION_CODES#DONUT&#125;, this was changed</span><br><span class="line">     * to a pool of threads allowing multiple tasks to operate in parallel. Starting</span><br><span class="line">     * &#123;@link android.os.Build.VERSION_CODES#HONEYCOMB&#125;, tasks are back to being</span><br><span class="line">     * executed on a single thread to avoid common application errors caused</span><br><span class="line">     * by parallel execution.  If you truly want parallel execution, you can use</span><br><span class="line">     * the &#123;@link #executeOnExecutor&#125; version of this method</span><br><span class="line">     * with &#123;@link #THREAD_POOL_EXECUTOR&#125;; however, see commentary there for warnings</span><br><span class="line">     * on its use.</span><br><span class="line">     *</span><br><span class="line">     * &lt;p&gt;This method must be invoked on the UI thread.</span><br><span class="line">     *</span><br><span class="line">     * @param params The parameters of the task.</span><br><span class="line">     *</span><br><span class="line">     * @return This instance of AsyncTask.</span><br><span class="line">     *</span><br><span class="line">     * @throws IllegalStateException If &#123;@link #getStatus()&#125; returns either</span><br><span class="line">     *         &#123;@link AsyncTask.Status#RUNNING&#125; or &#123;@link AsyncTask.Status#FINISHED&#125;.</span><br><span class="line">     *</span><br><span class="line">     * @see #executeOnExecutor(java.util.concurrent.Executor, Object[])</span><br><span class="line">     * @see #execute(Runnable)</span><br><span class="line">     */</span><br><span class="line">    @MainThread</span><br><span class="line">    public final AsyncTask&lt;Params, Progress, Result&gt; execute(Params... params) &#123;</span><br><span class="line">        return executeOnExecutor(sDefaultExecutor, params);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着调用executeOnExecutor方法。主要内容是，判断异常状态，给现有状态赋值，调用抽象方法onPreExecute，给mWorker.mParams赋值，执行sDefaultExecutor，参数是mFuture（SerialExecutor的excute方法）<br>sDefaultExecutor是SerialExecutor的一个实例,可以通过setDefaultExecutor来改变该值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@MainThread</span><br><span class="line">    public final AsyncTask&lt;Params, Progress, Result&gt; executeOnExecutor(Executor exec,</span><br><span class="line">            Params... params) &#123;</span><br><span class="line">        if (mStatus != Status.PENDING) &#123;</span><br><span class="line">            switch (mStatus) &#123;</span><br><span class="line">                case RUNNING:</span><br><span class="line">                    throw new IllegalStateException(&quot;Cannot execute task:&quot;</span><br><span class="line">                            + &quot; the task is already running.&quot;);</span><br><span class="line">                case FINISHED:</span><br><span class="line">                    throw new IllegalStateException(&quot;Cannot execute task:&quot;</span><br><span class="line">                            + &quot; the task has already been executed &quot;</span><br><span class="line">                            + &quot;(a task can be executed only once)&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mStatus = Status.RUNNING;</span><br><span class="line"></span><br><span class="line">        onPreExecute();</span><br><span class="line"></span><br><span class="line">        mWorker.mParams = params;</span><br><span class="line">        exec.execute(mFuture);</span><br><span class="line"></span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>再来看看mFuture，在构造方法中，定义了mWorker和mFuture。mFuture是Runnable的子类，mWorker是Callable的子类。<br>mWorker当做参数传入了mFuture的构造方法中。<br>下面看一下mFuture的构造方法和get方法以及run方法分别做了什么事情。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">public AsyncTask() &#123;</span><br><span class="line">        mWorker = new WorkerRunnable&lt;Params, Result&gt;() &#123;</span><br><span class="line">            public Result call() throws Exception &#123;</span><br><span class="line">                mTaskInvoked.set(true);</span><br><span class="line">                Result result = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line">                    //noinspection unchecked</span><br><span class="line">                    result = doInBackground(mParams);</span><br><span class="line">                    Binder.flushPendingCommands();</span><br><span class="line">                &#125; catch (Throwable tr) &#123;</span><br><span class="line">                    mCancelled.set(true);</span><br><span class="line">                    throw tr;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    postResult(result);</span><br><span class="line">                &#125;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        mFuture = new FutureTask&lt;Result&gt;(mWorker) &#123;</span><br><span class="line">            @Override</span><br><span class="line">            protected void done() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    postResultIfNotInvoked(get());</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    android.util.Log.w(LOG_TAG, e);</span><br><span class="line">                &#125; catch (ExecutionException e) &#123;</span><br><span class="line">                    throw new RuntimeException(&quot;An error occurred while executing doInBackground()&quot;,</span><br><span class="line">                            e.getCause());</span><br><span class="line">                &#125; catch (CancellationException e) &#123;</span><br><span class="line">                    postResultIfNotInvoked(null);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">private void postResultIfNotInvoked(Result result) &#123;</span><br><span class="line">        final boolean wasTaskInvoked = mTaskInvoked.get();</span><br><span class="line">        if (!wasTaskInvoked) &#123;</span><br><span class="line">            postResult(result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>构造方法中给callable赋值，也就是把传进来的mWorker保存为成员变量。<br>get方法貌似是做结果回调的。<br>run方法会在上面提到的executeOnExecutor方法中被调用。而在run方法中，Callable<v> c = callable;，result = c.call()。mWorker最终是在这里被调用。<br>也就是在AsyncTask的executeOnExecutor方法中被调用。当调用结束时，结果通过done方法返回。</v></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public FutureTask(Callable&lt;V&gt; callable) &#123;</span><br><span class="line">        if (callable == null)</span><br><span class="line">            throw new NullPointerException();</span><br><span class="line">        this.callable = callable;</span><br><span class="line">        this.state = NEW;       // ensure visibility of callable</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public V get() throws InterruptedException, ExecutionException &#123;</span><br><span class="line">        int s = state;</span><br><span class="line">        if (s &lt;= COMPLETING)</span><br><span class="line">            s = awaitDone(false, 0L);</span><br><span class="line">        return report(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public void run() &#123;</span><br><span class="line">        if (state != NEW ||</span><br><span class="line">            !U.compareAndSwapObject(this, RUNNER, null, Thread.currentThread()))</span><br><span class="line">            return;</span><br><span class="line">        try &#123;</span><br><span class="line">            Callable&lt;V&gt; c = callable;</span><br><span class="line">            if (c != null &amp;&amp; state == NEW) &#123;</span><br><span class="line">                V result;</span><br><span class="line">                boolean ran;</span><br><span class="line">                try &#123;</span><br><span class="line">                    result = c.call();</span><br><span class="line">                    ran = true;</span><br><span class="line">                &#125; catch (Throwable ex) &#123;</span><br><span class="line">                    result = null;</span><br><span class="line">                    ran = false;</span><br><span class="line">                    setException(ex);</span><br><span class="line">                &#125;</span><br><span class="line">                if (ran)</span><br><span class="line">                    set(result);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            // runner must be non-null until state is settled to</span><br><span class="line">            // prevent concurrent calls to run()</span><br><span class="line">            runner = null;</span><br><span class="line">            // state must be re-read after nulling runner to prevent</span><br><span class="line">            // leaked interrupts</span><br><span class="line">            int s = state;</span><br><span class="line">            if (s &gt;= INTERRUPTING)</span><br><span class="line">                handlePossibleCancellationInterrupt(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>而我们实现的doInBackground方法，则是在mWorker的call方法中调用。这里的结果result最终是给了上一段代码中的result，走的是mFuture的结果回调。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mWorker = new WorkerRunnable&lt;Params, Result&gt;() &#123;</span><br><span class="line">            public Result call() throws Exception &#123;</span><br><span class="line">                mTaskInvoked.set(true);</span><br><span class="line">                Result result = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line">                    //noinspection unchecked</span><br><span class="line">                    result = doInBackground(mParams);</span><br><span class="line">                    Binder.flushPendingCommands();</span><br><span class="line">                &#125; catch (Throwable tr) &#123;</span><br><span class="line">                    mCancelled.set(true);</span><br><span class="line">                    throw tr;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    postResult(result);</span><br><span class="line">                &#125;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
+<p>关于线程切换<br>所有的任务其实真正由THREAD_POOL_EXECUTOR来完成线程的切换和线程的管理。THREAD_POOL_EXECUTOR被初始化为ThreadPoolExecutor的实例。<br>结果回调在postResult方法中用handler回到主线程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public static final Executor THREAD_POOL_EXECUTOR;</span><br><span class="line"></span><br><span class="line">static &#123;</span><br><span class="line">        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(</span><br><span class="line">                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,</span><br><span class="line">                sPoolWorkQueue, sThreadFactory);</span><br><span class="line">        threadPoolExecutor.allowCoreThreadTimeOut(true);</span><br><span class="line">        THREAD_POOL_EXECUTOR = threadPoolExecutor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">private static class SerialExecutor implements Executor &#123;</span><br><span class="line">        final ArrayDeque&lt;Runnable&gt; mTasks = new ArrayDeque&lt;Runnable&gt;();</span><br><span class="line">        Runnable mActive;</span><br><span class="line"></span><br><span class="line">        public synchronized void execute(final Runnable r) &#123;</span><br><span class="line">            mTasks.offer(new Runnable() &#123;</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        r.run();</span><br><span class="line">                    &#125; finally &#123;</span><br><span class="line">                        scheduleNext();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            if (mActive == null) &#123;</span><br><span class="line">                scheduleNext();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        protected synchronized void scheduleNext() &#123;</span><br><span class="line">            if ((mActive = mTasks.poll()) != null) &#123;</span><br><span class="line">                THREAD_POOL_EXECUTOR.execute(mActive);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/26/AsyncTask源码分析/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-webview" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/26/webview/">webview</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/26/webview/" class="archive-article-date">
+  	<time datetime="2017-12-26T06:59:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/26/webview/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-图片处理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -641,152 +775,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2017/12/25/java注解/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Loader" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/21/Loader/">Loader</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/21/Loader/" class="archive-article-date">
-  	<time datetime="2017-12-21T09:47:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="基本使用部分"><a href="#基本使用部分" class="headerlink" title="基本使用部分"></a>基本使用部分</h2><h3 id="自定义Loader"><a href="#自定义Loader" class="headerlink" title="自定义Loader"></a>自定义Loader</h3><p>新建一个类继承自AsyncTaskLoader 覆写loadInBackground方法，此时若直接使用则不会有结果返回，因为Loader的生命周期不会调用loadInBackground，因此要重写onStartLoading方法，在这个方法里面调用forceLoad()。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：不能手动调用loadInBackground方法，否则可能出现loadInBackground在主线程执行的情况</span><br></pre></td></tr></table></figure>
-<p>示例代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">public class mLoader extends AsyncTaskLoader &#123;</span><br><span class="line">    public mLoader(Context context) &#123;</span><br><span class="line">        super(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Bitmap loadInBackground() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            URL url = new URL(&quot;http://img.ivsky.com/img/bizhi/t/201711/29/january_2018-003.jpg&quot;);</span><br><span class="line">            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();</span><br><span class="line">            urlConnection.connect();</span><br><span class="line">            InputStream inputStream = urlConnection.getInputStream();</span><br><span class="line">            ByteArrayOutputStream baos = new ByteArrayOutputStream();</span><br><span class="line">            int len = 0;</span><br><span class="line">            byte[] b = new byte[1024];</span><br><span class="line">            while((len = inputStream.read(b))!=-1)&#123;</span><br><span class="line">                baos.write(b,0,len);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(&quot;加载图片完成&quot;);</span><br><span class="line">            return BitmapFactory.decodeByteArray(baos.toByteArray(),0,baos.size());</span><br><span class="line">        &#125; catch (MalformedURLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void cancelLoadInBackground() &#123;</span><br><span class="line">        super.cancelLoadInBackground();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void deliverResult(Object data) &#123;</span><br><span class="line">        super.deliverResult(data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onStartLoading() &#123;</span><br><span class="line">        super.onStartLoading();</span><br><span class="line">        forceLoad();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onStopLoading() &#123;</span><br><span class="line">        super.onStopLoading();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onCanceled(Object data) &#123;</span><br><span class="line">        super.onCanceled(data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onReset() &#123;</span><br><span class="line">        super.onReset();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    private ImageView image;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        image = ((ImageView) findViewById(R.id.image1));</span><br><span class="line">        getLoaderManager().initLoader(0, null, new android.app.LoaderManager.LoaderCallbacks&lt;Bitmap&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Loader&lt;Bitmap&gt; onCreateLoader(int id, Bundle args) &#123;</span><br><span class="line">                return new mLoader(MainActivity.this);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void onLoadFinished(Loader&lt;Bitmap&gt; loader, Bitmap data) &#123;</span><br><span class="line">                if(data!=null)&#123;</span><br><span class="line">                    image.setImageBitmap(data);</span><br><span class="line"></span><br><span class="line">                &#125;else &#123;</span><br><span class="line">                    System.out.println(&quot;图片为空&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void onLoaderReset(Loader&lt;Bitmap&gt; loader) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">//        getLoaderManager().getLoader(0).startLoading();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="CursorLoader"><a href="#CursorLoader" class="headerlink" title="CursorLoader"></a>CursorLoader</h3><p>CursorLoader一般用于读取数据库的列表或。一般与CursorAdapter配合使用，基本的使用方法与自定义类似</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    private ListView listview;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        listview = (ListView) findViewById(R.id.listview);</span><br><span class="line">        getLoaderManager().initLoader(0, null, new android.app.LoaderManager.LoaderCallbacks&lt;Cursor&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Loader&lt;Cursor&gt; onCreateLoader(int id, Bundle args) &#123;</span><br><span class="line">                Uri ContactUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;</span><br><span class="line">                return new CursorLoader(MainActivity.this,ContactUri,null,null,null,null);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void onLoadFinished(Loader&lt;Cursor&gt; loader, Cursor data) &#123;</span><br><span class="line">                data.moveToFirst();</span><br><span class="line">                mCursorAdapter adapter = new mCursorAdapter(MainActivity.this,data);</span><br><span class="line">                listview.setAdapter(adapter);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void onLoaderReset(Loader&lt;Cursor&gt; loader) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Loader源码分析"><a href="#Loader源码分析" class="headerlink" title="Loader源码分析"></a>Loader源码分析</h2><p> Loader由LoaderManager管理，每个activity和fragment都维护了自己的LoaderManager(LoaderManagerImp).activity中的mAllLoaderManagers保存了Activity与Fragment的所有LoaderManager.fragment中getLoaderManager调用的是activity中的方法。<br> 在调用activity的getLoaderManager方法时，先判断所有mAllLoaderManagers是否为空，再去获取对应的LoaderManager，如果获取不到，则生成新的对象。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">public class Activity extends ContextThemeWrapper</span><br><span class="line">        implements ... &#123;</span><br><span class="line">        //mAllLoaderManagers保存了Activity与Fragment的所有LoaderManager</span><br><span class="line">    ArrayMap&lt;String, LoaderManagerImpl&gt; mAllLoaderManagers;</span><br><span class="line">    LoaderManagerImpl mLoaderManager;</span><br><span class="line">    ......</span><br><span class="line">    //Activity中获取LoaderManager实例的方法</span><br><span class="line">    public LoaderManager getLoaderManager() &#123;</span><br><span class="line">        //可以看见，一个Activity只有一个LoaderManager</span><br><span class="line">        if (mLoaderManager != null) &#123;</span><br><span class="line">            return mLoaderManager;</span><br><span class="line">        &#125;</span><br><span class="line">        mCheckedForLoaderManager = true;</span><br><span class="line">        //咦？这不就是上面Fragment的getLoaderManager中调运的那个activity中的getLoaderManager吗，只是和这里的参数不一样而已</span><br><span class="line">        mLoaderManager = getLoaderManager(&quot;(root)&quot;, mLoadersStarted, true);</span><br><span class="line">        return mLoaderManager;</span><br><span class="line">    &#125;</span><br><span class="line">    //Activity与Fragment获取LoaderManager实例的真正方法！！</span><br><span class="line">    LoaderManagerImpl getLoaderManager(String who, boolean started, boolean create) &#123;</span><br><span class="line">        //可见一个Activity维护一个mAllLoaderManagers的MAP</span><br><span class="line">        if (mAllLoaderManagers == null) &#123;</span><br><span class="line">            mAllLoaderManagers = new ArrayMap&lt;String, LoaderManagerImpl&gt;();</span><br><span class="line">        &#125;</span><br><span class="line">        //尝试从缓存mAllLoaderManagers的MAP中获取已经实例化的LoaderManager实例</span><br><span class="line">        LoaderManagerImpl lm = mAllLoaderManagers.get(who);</span><br><span class="line">        if (lm == null) &#123;</span><br><span class="line">            if (create) &#123;</span><br><span class="line">                //如果没有找到并且需要实例化create（切记这个create参数是很重要的），就调运LoaderManagerImpl构造方法实例化一个LoaderManager对象，然后存入缓存mAllLoaderManagers的MAP中</span><br><span class="line">                lm = new LoaderManagerImpl(who, this, started);</span><br><span class="line">                mAllLoaderManagers.put(who, lm);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            lm.updateActivity(this);</span><br><span class="line">        &#125;</span><br><span class="line">        return lm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void invalidateFragment(String who) &#123;</span><br><span class="line">        if (mAllLoaderManagers != null) &#123;</span><br><span class="line">            LoaderManagerImpl lm = mAllLoaderManagers.get(who);</span><br><span class="line">            if (lm != null &amp;&amp; !lm.mRetaining) &#123;</span><br><span class="line">                //生命周期依附上LoaderManager</span><br><span class="line">                lm.doDestroy();</span><br><span class="line">                mAllLoaderManagers.remove(who);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    final void performStop() &#123;</span><br><span class="line">        if (mLoadersStarted) &#123;</span><br><span class="line">            mLoadersStarted = false;</span><br><span class="line">            //生命周期依附上LoaderManager</span><br><span class="line">            if (mLoaderManager != null) &#123;</span><br><span class="line">                //mChangingConfigurations表示如果当前发生了配置变化则为true，否则为false！！！！！！！重点，Loader特性之一</span><br><span class="line">                if (!mChangingConfigurations) &#123;</span><br><span class="line">                    //当前Activity的stop不是由配置变化引起则直接调用LoaderManager的doStop()方法！！！！！！</span><br><span class="line">                    mLoaderManager.doStop();</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    //当前Activity配置变化，所以需要保存当前的loaderManager，在Activity恢复时恢复这个LoaderManager！！！！！！</span><br><span class="line">                    mLoaderManager.doRetain();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ......</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    final void performDestroy() &#123;</span><br><span class="line">        ......</span><br><span class="line">        onDestroy();</span><br><span class="line">        //生命周期依附上LoaderManager</span><br><span class="line">        if (mLoaderManager != null) &#123;</span><br><span class="line">            mLoaderManager.doDestroy();</span><br><span class="line">        &#125;</span><br><span class="line">        ......</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        if (mLastNonConfigurationInstances != null) &#123;</span><br><span class="line">            //从mLastNonConfigurationInstances中恢复mAllLoaderManagers（mLastNonConfigurationInstances是从onAttach中恢复的），Activity配置变化时会走这里！！！！</span><br><span class="line">            mAllLoaderManagers = mLastNonConfigurationInstances.loaders;</span><br><span class="line">        &#125;</span><br><span class="line">        ......</span><br><span class="line">        mCalled = true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    final void performStart() &#123;</span><br><span class="line">    ......</span><br><span class="line">        if (mAllLoaderManagers != null) &#123;</span><br><span class="line">            final int N = mAllLoaderManagers.size();</span><br><span class="line">            LoaderManagerImpl loaders[] = new LoaderManagerImpl[N];</span><br><span class="line">            for (int i=N-1; i&gt;=0; i--) &#123;</span><br><span class="line">                loaders[i] = mAllLoaderManagers.valueAt(i);</span><br><span class="line">            &#125;</span><br><span class="line">            //生命周期依附上LoaderManager</span><br><span class="line">            for (int i=0; i&lt;N; i++) &#123;</span><br><span class="line">                LoaderManagerImpl lm = loaders[i];</span><br><span class="line">                //调用LoaderManager.finishRetain()以及doReportStart()方法来恢复LoaderManager的状态！！！！！</span><br><span class="line">                lm.finishRetain();</span><br><span class="line">                lm.doReportStart();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        mActivityTransitionState.enterReady(this);</span><br><span class="line">    &#125;</span><br><span class="line">    //该方法会被ActivityThread类调用，且调运时机早于performDestroy()方法！！！！！！</span><br><span class="line">    NonConfigurationInstances retainNonConfigurationInstances() &#123;</span><br><span class="line">        ......</span><br><span class="line">        NonConfigurationInstances nci = new NonConfigurationInstances();</span><br><span class="line">        ......</span><br><span class="line">        //配置变化时保存mAllLoaderManagers！！！！！！</span><br><span class="line">        nci.loaders = mAllLoaderManagers;</span><br><span class="line">        return nci;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>一次完整的数据加载流程为Activity调用LoaderManager的doStart()方法，然后LoaderManager调用Loader的startLoading()方法，然后Loader调运AsyncTaskLoader的doingBackground()方法进行耗时数据加载，然后AsyncTaskLoader回调LoaderManager的complete数据加载完成方法，接着LoaderManager回调我们在Activity中实现的callback中的onLoadFinish()方法。</p>
-<p>Acivity和Fragment的生命周期主动管理了LoaderManager，每个Activity用一个ArrayMap的mAllLoaderManager来保存当前Activity及其附属Frament的唯一LoaderManager；在Activity配置发生变化时，Activity在destory前会保存mAllLoaderManager，当Activity再重新创建时，会在Activity的onAttcach()、onCreate()、performStart()方法中恢复mAllLoaderManager。</p>
-<p>LoaderManager给Activity提供了管理自己的一些方法；同时主动管理了对应的Loader，它把每一个Loader封装为LoadInfo对象，同时它负责主动调运管理Loader的startLoading()、stopLoading()、,forceLoad()等方法。</p>
-<p>由于整个Activity和Fragment主动管理了Loader，所以关于Loader的释放（譬如CursorLoader的Cursor关闭等）不需要我们人为处理，Loader框架会帮我们很好的处理的；同时特别注意，对于CursorLoader，当我们数据源发生变化时Loader框架会通过ContentObserver调用onContentChanged的forceLoad方法重新请求数据进行回调刷新。</p>
-<p>AsyncTaskLoader    :会自动刷新数据变化；会自动处理Activiy配置变化造成的影响；适合处理纯数据加载；    不能实时通知UI刷新；不能在onLoadFinished时主动切换生命周期（譬如replace Fragment）；<br>AsyncTask  :可以与UI实时交互及replace操作；    不会自动处理Activiy配置变化造成的影响；</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/21/Loader/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/21/hello-world/">MarkDown语法提示</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/21/hello-world/" class="archive-article-date">
-  	<time datetime="2017-12-21T06:55:29.956Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://www.jianshu.com/p/q81RER" target="_blank" rel="noopener">MrkdDown基本语法</a></p>
-<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/21/hello-world/">展开全文 >></a>
         </p>
       
 

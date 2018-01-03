@@ -6,14 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title></title>
+  <title>Class文件的加载过程 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="在class文件中描述的各种信息，最终都需要被加载到虚拟机中之后，才能被运行和使用。虚拟机把描述类的数据从class文件加载到内存，并对数据进行校验，转换，解析和初始化，最终形成可以被虚拟机直接使用的java类型，这就是虚拟机的类加载机制。 类加载的时机：类从被加载到虚拟机内存开始，到卸载出内存为止，其生命周期包括：加载（loading），验证（verification），准备(preparati">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Class文件的加载过程">
+<meta property="og:url" content="http://yoursite.com/2018/01/03/Class文件的加载过程/index.html">
 <meta property="og:site_name">
+<meta property="og:description" content="在class文件中描述的各种信息，最终都需要被加载到虚拟机中之后，才能被运行和使用。虚拟机把描述类的数据从class文件加载到内存，并对数据进行校验，转换，解析和初始化，最终形成可以被虚拟机直接使用的java类型，这就是虚拟机的类加载机制。 类加载的时机：类从被加载到虚拟机内存开始，到卸载出内存为止，其生命周期包括：加载（loading），验证（verification），准备(preparati">
+<meta property="og:updated_time" content="2018-01-03T03:45:49.920Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title">
+<meta name="twitter:title" content="Class文件的加载过程">
+<meta name="twitter:description" content="在class文件中描述的各种信息，最终都需要被加载到虚拟机中之后，才能被运行和使用。虚拟机把描述类的数据从class文件加载到内存，并对数据进行校验，转换，解析和初始化，最终形成可以被虚拟机直接使用的java类型，这就是虚拟机的类加载机制。 类加载的时机：类从被加载到虚拟机内存开始，到卸载出内存为止，其生命周期包括：加载（loading），验证（verification），准备(preparati">
   
     <link rel="alternative" href="/atom.xml" title="" type="application/atom+xml">
   
@@ -147,78 +151,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-touch事件分发机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Class文件的加载过程" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/03/touch事件分发机制/">touch事件分发机制</a>
-    </h1>
-  
-
-        
-        <a href="/2018/01/03/touch事件分发机制/" class="archive-article-date">
-  	<time datetime="2018-01-03T03:48:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/01/03/touch事件分发机制/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Class文件的加载过程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/03/Class文件的加载过程/">Class文件的加载过程</a>
+    <h1 class="article-title" itemprop="name">
+      Class文件的加载过程
     </h1>
   
 
@@ -251,16 +191,33 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/01/03/Class文件的加载过程/">展开全文 >></a>
-        </p>
-      
 
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2018/01/03/touch事件分发机制/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          touch事件分发机制
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/01/03/GestureDetector处理手势/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">GestureDetector处理手势</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -280,582 +237,14 @@
 
 
 
-
-  
-    <article id="post-GestureDetector处理手势" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/03/GestureDetector处理手势/">GestureDetector处理手势</a>
-    </h1>
-  
-
-        
-        <a href="/2018/01/03/GestureDetector处理手势/" class="archive-article-date">
-  	<time datetime="2018-01-03T02:22:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>GestureDetector类用于检测一系列由 MotionEvent提供的手势事件，当特定的手势事件发生时，通过调用<br>GestureDetector.OnGestureDetectorListener接口中定义的回调函数通知用户。<br>使用方式：<br>1.为你的view创建一个GestureDetector的实例；<br>2.覆写view的onTouchEvent，并调用GestureDetector的OnTouchEvent方法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener &#123;</span><br><span class="line"></span><br><span class="line">    GestureDetector gestureDetector;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        gestureDetector = new GestureDetector(this,this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onTouchEvent(MotionEvent event) &#123;</span><br><span class="line">        return gestureDetector.onTouchEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onDown(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onDown&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onShowPress(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onShowPress&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onSingleTapUp(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onSingleTapUp&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onScroll&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onLongPress(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onLongPress&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onFling&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/01/03/GestureDetector处理手势/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-java内存区域" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/java内存区域/">java内存区域</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/java内存区域/" class="archive-article-date">
-  	<time datetime="2017-12-28T09:05:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>JVM运行程序的时候内存会被分为若干个区域，如下图<br><img src="/2017/12/28/java内存区域/img1.png" alt="img1"></p>
-<p>其中，方法区和堆内存是所有线程共享数据的区域，栈和程序计数器都是每个线程独立</p>
-<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>简述<br>程序计数器（program counter register）只占用了一块比较小的内存空间，至于小到什么程度呢，这样说吧，有时可以忽略不计的。</p>
-<p>作用<br>可以看作是当前线程所执行的字节码文件（class）的行号指示器。在虚拟机的世界中，字节码解释器就是通过改变计数器的值来选取下一条执行的字节码指令，分支、循环、跳转、异常处理、线程恢复都需要这玩意来实现的。</p>
-<p>特性<br>因为处理器在一个确定是时刻只会执行一个线程中的指令，线程切换后，是通过计数器来记录执行痕迹的，因而可以看出，程序计数器是每个线程私有的。<br>如果执行的是java方法，那么记录的是正在执行的虚拟机字节码指令的地址的地址，如果是native方法，计数器的值为空（undefined）。<br>这个内存区域是唯一一个在java虚拟界规范中没有规定任何OutOfMemoryError的情况的区域。</p>
-<h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><p>虚拟机栈也是线程私有的，生命周期与线程相同。这个栈描述的是java方法执行的内存模型，每个方法被执行的时候都会同时创建一个栈帧，栈帧用于存储局部变量表，操作数栈，动态链接，操作出口，方法出口等信息。每个方法被调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程。<br>下图描述的是栈帧的结构：<br><img src="/2017/12/28/java内存区域/img2.png" alt="img2"></p>
-<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>与虚拟机栈所发挥的作用一致，其区别就是虚拟机栈为虚拟机执行java方法服务，而本地方法栈则是为虚拟机中所使用到的native方法服务。由于虚拟机规范中对本地方法栈中的方法使用的语言，使用方式与数据结构并没有强制规定，所以具体的虚拟机可以自由实现它，有的虚拟机中直接将本地方法栈和虚拟机栈合二为一。</p>
-<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>java堆是jvm所管理的内存中最大的一块，java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。此内存区域的唯一目的就是存放对象实例，几乎所有的对象实例都在这里分配内存。另外，java堆是垃圾回收器管理的主要区域，因此很多时候被称为gc堆。关于垃圾回收见<a href="https://dk233333.github.io/2017/12/28/Java-Garbage-Collector/" target="_blank" rel="noopener">这篇博客</a></p>
-<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>跟java堆一样，是各个线程共享的区域。它用于存储已被虚拟机加载的类信息，常量，静态变量，即时编译器编译后的代码等数据。java虚拟机规范将其描述为堆的一个逻辑部分。<br>运行时常量池：常量池是方法区的一部分，Class文件中除了有类的版本，字段，方法，接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。</p>
-<p>示例：<br>当我们写下这行代码时：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object obj = new Object();</span><br></pre></td></tr></table></figure>
-<p>其实涉及到了java栈，堆，方法区这三个最重要的内存区域。<br>Object obj这部分的语义将会被映射到java栈的本地变量表中，作为一个reference类型数据出现。而new Object()部分则会反映到java堆中，另外，在java堆中还必须包含能查找到此对象类型数据（如对象类型，父类，方法等）的地址信息，这些类型数据存储在方法区中。<br>由于reference类型在java虚拟机规范里面只规定了一个指向对象的引用，并没有定义这个引用应该通过哪种方式去定位，以及访问到java堆中对象的具体位置，因此，不同虚拟机实现的对象访问方式会有所不同，主流的访问方式有两种：使用句柄和直接指针。<br>1.如果使用句柄访问方式，java堆将会划分出一块内存来作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据和类型数据的具体地址信息（方法区中）：<br><img src="/2017/12/28/java内存区域/img3.png" alt="img3"></p>
-<p>2.如果使用直接指针访问方式，java堆对象的布局中就必须考虑如何防止访问类型数据的相关信息，reference中直接存储的就是对象地址。</p>
-<p><img src="/2017/12/28/java内存区域/img4.png" alt="img4"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/java内存区域/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-加载图片导致OOM的解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/加载图片导致OOM的解决方案/">加载图片导致OOM的解决方案</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/加载图片导致OOM的解决方案/" class="archive-article-date">
-  	<time datetime="2017-12-28T08:53:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://blog.csdn.net/chdjj/article/details/20455791" target="_blank" rel="noopener">参见这篇博客</a>和<a href="http://blog.csdn.net/chdjj/article/details/21005221" target="_blank" rel="noopener">这篇博客</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/加载图片导致OOM的解决方案/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Android内存管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/Android内存管理/">Android内存管理</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/Android内存管理/" class="archive-article-date">
-  	<time datetime="2017-12-28T08:40:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://www.jianshu.com/p/48475df838d9" target="_blank" rel="noopener">附录</a><br>Android在4.4之前一直使用的Dalvik虚拟机作为App的运行VM的, 4.4中引入了ART作为开发者备选, 5.0起正式将ART作为默认VM了.</p>
-<h3 id="Dalvik"><a href="#Dalvik" class="headerlink" title="Dalvik"></a>Dalvik</h3><p>1.Dalvik基于寄存器  jvm基于栈，基于寄存器的虚拟机对于编译后变大的程序来说，在它执行的时候，花费的时间更短。但是指令所占空间更大（要指定目标和来源）<br>2.Dalvik主要完成对象生命周期的管理，堆栈管理，线程管理，安全和异常管理，负责进程隔离和线程管理，每一个android应用在底层都对应一个独立的dalvik虚拟机实例。代码在虚拟机的解释下执行。<br>3.dex文件可以减少整体文件尺寸，提高io查找速度<br>4.odex为了在运行的时候进一步提高性能。<br>5.所有的android应用的线程都对应一个linux线程，因此虚拟机可以更多地依赖操作系统的线程调度和管理机制<br>6.有一个特殊的虚拟机进程Zygote，它是虚拟机实例的孵化器，对于一些只读的系统库，所有虚拟机实例都和Zygote共享一块内存区域<br>7,Dalvik采用JIT（即时编译）技术，在应用程序启动时, JIT通过进行连续的性能分析来优化程序代码的执行, 在程序运行的过程中, Dalvik在不断的进行将字节码编译成机器码的工作</p>
-<h3 id="ART"><a href="#ART" class="headerlink" title="ART"></a>ART</h3><p>ART取自Android Run Time，为了提高安卓运行效率<br>1.引入AOT（ahead of time）预编译技术，在安装apk的过程中, ART会使用dex2oat程序所有的字节码预编译成了机器码. 应用程序运行过程中无需进行实时的编译工作, 只需要进行直接调用. 故而提高了应用程序的运行效率.</p>
-<h3 id="前台进程"><a href="#前台进程" class="headerlink" title="前台进程"></a>前台进程</h3><p><img src="/2017/12/28/Android内存管理/img1.png" alt="img1"></p>
-<h3 id="可见进程"><a href="#可见进程" class="headerlink" title="可见进程"></a>可见进程</h3><p><img src="/2017/12/28/Android内存管理/img2.png" alt="img2"></p>
-<p><img src="/2017/12/28/Android内存管理/img3.png" alt="img3"></p>
-<p><img src="/2017/12/28/Android内存管理/img4.png" alt="img4"></p>
-<p><img src="/2017/12/28/Android内存管理/img5.png" alt="img5"></p>
-<p><a href="http://www.jianshu.com/p/080473ae050b" target="_blank" rel="noopener">内存分析工具</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/Android内存管理/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-内存泄漏和内存溢出" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/内存泄漏和内存溢出/">内存泄漏和内存溢出</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/内存泄漏和内存溢出/" class="archive-article-date">
-  	<time datetime="2017-12-28T08:35:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>内存泄漏指程序动态分配的内存由于某些原因无法释放，造成内存浪费，导致程序运行速度变慢甚至崩溃</p>
-<p>内存溢出指程序申请的内存超出虚拟机给程序分配的最大可用内存。程序发生OOM并不代表RAM不足，而是因为程序申请的对象大小超过了dalvik虚拟机的允许最大值。RAM不足时系统会杀死别的进程来释放内存。</p>
-<p><img src="/2017/12/28/内存泄漏和内存溢出/img1.png" alt="附图1"></p>
-<p>bitmap分配在dalvik heap、上，而不是native heap</p>
-<p><a href="http://blog.csdn.net/gemmem/article/details/8920039" target="_blank" rel="noopener">附录</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/内存泄漏和内存溢出/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-路线" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/28/路线/">路线</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/28/路线/" class="archive-article-date">
-  	<time datetime="2017-12-28T08:06:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>看官方文档,示例</p>
-<ul>
-<li>AIDL：熟悉AIDL，理解其工作原理，懂transact和onTransact的区别； </li>
-<li>Binder：从Java层大概理解Binder的工作原理，懂Parcel对象的使用； </li>
-<li>多进程：熟练掌握多进程的运行机制，懂Messenger、Socket等； </li>
-<li>事件分发：弹性滑动、滑动冲突等； </li>
-<li>玩转View：View的绘制原理、各种自定义View； </li>
-<li>动画系列：熟悉View动画和属性动画的不同点，懂属性动画的工作原理； </li>
-<li>懂性能优化、熟悉mat等工具 </li>
-<li><p>懂点常见的设计模式</p>
-</li>
-<li><p>搞懂view的滑动原理 </p>
-</li>
-<li>搞懂如何实现弹性滑动 </li>
-<li>搞懂view的滑动冲突 </li>
-<li>搞懂view的measure、layout和draw </li>
-<li>然后再学习几个已有的自定义view的例子 </li>
-<li>最后就可以搞定自定义view了，所谓万变不离其宗</li>
-</ul>
-<ol>
-<li>了解SystemServer的启动过程 </li>
-<li>了解主线程的消息循环模型 </li>
-<li>了解AMS和PMS的工作原理 </li>
-<li>能够回答问题”一个应用存在多少个Window？“ </li>
-<li>了解四大组件的大概工作流程 </li>
-<li>… </li>
-</ol>
-<ul>
-<li>基本知识点的细节 </li>
-</ul>
-<ol>
-<li>Activity的启动模式以及异常情况下不同Activity的表现 </li>
-<li>Service的onBind和onReBind的关联 </li>
-<li>onServiceDisconnected(ComponentName className)和binderDied()的区别 </li>
-<li>AsyncTask在不同版本上的表现细节 </li>
-<li>线程池的细节和参数配置 </li>
-<li>… </li>
-</ol>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/28/路线/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-BaseAdapter源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/27/BaseAdapter源码分析/">BaseAdapter源码分析</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/27/BaseAdapter源码分析/" class="archive-article-date">
-  	<time datetime="2017-12-27T09:33:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/27/BaseAdapter源码分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Handler源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/Handler源码分析/">Handler源码分析</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/Handler源码分析/" class="archive-article-date">
-  	<time datetime="2017-12-26T09:55:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Handler用于线程之间通信。<br>可以通过post和sendXXXMessage的方式从当前线程朝目标线程（默认是Handler创建的线程）发送消息。</p>
-<p>首先看一下post方法和sendXXXMessage方法,这些发送消息的方法（调用的时候一般在其他线程），最终走的都是sendMessageAtTime方法，其中post方法会新建一个Message实例。</p>
-<p>enqueueMessage中消息被放到目标线程的消息队列中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public final boolean post(Runnable r)</span><br><span class="line">    &#123;</span><br><span class="line">       return  sendMessageDelayed(getPostMessage(r), 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">private static Message getPostMessage(Runnable r) &#123;</span><br><span class="line">        Message m = Message.obtain();</span><br><span class="line">        m.callback = r;</span><br><span class="line">        return m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">public final boolean sendMessage(Message msg)</span><br><span class="line">    &#123;</span><br><span class="line">        return sendMessageDelayed(msg, 0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">public final boolean sendMessageDelayed(Message msg, long delayMillis)</span><br><span class="line">    &#123;</span><br><span class="line">        if (delayMillis &lt; 0) &#123;</span><br><span class="line">            delayMillis = 0;</span><br><span class="line">        &#125;</span><br><span class="line">        return sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">public boolean sendMessageAtTime(Message msg, long uptimeMillis) &#123;</span><br><span class="line">        MessageQueue queue = mQueue;</span><br><span class="line">        if (queue == null) &#123;</span><br><span class="line">            RuntimeException e = new RuntimeException(</span><br><span class="line">                    this + &quot; sendMessageAtTime() called with no mQueue&quot;);</span><br><span class="line">            Log.w(&quot;Looper&quot;, e.getMessage(), e);</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        return enqueueMessage(queue, msg, uptimeMillis);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>在Looper的loop方法中，处理了消息。调用了handler的dispatchMessage方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">public static void loop() &#123;</span><br><span class="line">        final Looper me = myLooper();</span><br><span class="line">        if (me == null) &#123;</span><br><span class="line">            throw new RuntimeException(&quot;No Looper; Looper.prepare() wasn&apos;t called on this thread.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        final MessageQueue queue = me.mQueue;</span><br><span class="line"></span><br><span class="line">        // Make sure the identity of this thread is that of the local process,</span><br><span class="line">        // and keep track of what that identity token actually is.</span><br><span class="line">        Binder.clearCallingIdentity();</span><br><span class="line">        final long ident = Binder.clearCallingIdentity();</span><br><span class="line"></span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            Message msg = queue.next(); // might block</span><br><span class="line">            if (msg == null) &#123;</span><br><span class="line">                // No message indicates that the message queue is quitting.</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // This must be in a local variable, in case a UI event sets the logger</span><br><span class="line">            final Printer logging = me.mLogging;</span><br><span class="line">            if (logging != null) &#123;</span><br><span class="line">                logging.println(&quot;&gt;&gt;&gt;&gt;&gt; Dispatching to &quot; + msg.target + &quot; &quot; +</span><br><span class="line">                        msg.callback + &quot;: &quot; + msg.what);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            final long traceTag = me.mTraceTag;</span><br><span class="line">            if (traceTag != 0 &amp;&amp; Trace.isTagEnabled(traceTag)) &#123;</span><br><span class="line">                Trace.traceBegin(traceTag, msg.target.getTraceName(msg));</span><br><span class="line">            &#125;</span><br><span class="line">            try &#123;</span><br><span class="line">                msg.target.dispatchMessage(msg);</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                if (traceTag != 0) &#123;</span><br><span class="line">                    Trace.traceEnd(traceTag);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (logging != null) &#123;</span><br><span class="line">                logging.println(&quot;&lt;&lt;&lt;&lt;&lt; Finished to &quot; + msg.target + &quot; &quot; + msg.callback);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // Make sure that during the course of dispatching the</span><br><span class="line">            // identity of the thread wasn&apos;t corrupted.</span><br><span class="line">            final long newIdent = Binder.clearCallingIdentity();</span><br><span class="line">            if (ident != newIdent) &#123;</span><br><span class="line">                Log.wtf(TAG, &quot;Thread identity changed from 0x&quot;</span><br><span class="line">                        + Long.toHexString(ident) + &quot; to 0x&quot;</span><br><span class="line">                        + Long.toHexString(newIdent) + &quot; while dispatching to &quot;</span><br><span class="line">                        + msg.target.getClass().getName() + &quot; &quot;</span><br><span class="line">                        + msg.callback + &quot; what=&quot; + msg.what);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            msg.recycleUnchecked();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/Handler源码分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+
   
 
 
@@ -878,8 +267,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
