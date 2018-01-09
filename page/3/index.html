@@ -149,6 +149,86 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-public-protect-private的作用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/26/public-protect-private的作用/">public,protect,private的作用</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/26/public-protect-private的作用/" class="archive-article-date">
+  	<time datetime="2017-12-26T02:18:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="值得注意的点"><a href="#值得注意的点" class="headerlink" title="值得注意的点"></a>值得注意的点</h3><p>1.静态方法中不能调用非静态的成员或成员方法：<br>    不能引用非静态成员变量大家都很清楚：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class A  </span><br><span class="line">  </span><br><span class="line">int a;  </span><br><span class="line">public static void main(String[] args)  </span><br><span class="line">&#123;  </span><br><span class="line">  a = 2;//错误!!a非静态  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是往往忽略以下的情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">package cn.edu.chd.test;  </span><br><span class="line">public class B  </span><br><span class="line">&#123;  </span><br><span class="line">    public static void main(String[] args)  </span><br><span class="line">    &#123;  </span><br><span class="line">        new C();//错误,该类是动态类  此时C可能还没有被类加载器加载</span><br><span class="line">        new B().new C();//正确    </span><br><span class="line">        new D();//正确，该类是静态类  </span><br><span class="line">    &#125;  </span><br><span class="line">    public void func()  </span><br><span class="line">    &#123;  </span><br><span class="line">        new C();//正确  </span><br><span class="line">        new D();//正确  </span><br><span class="line">    &#125;  </span><br><span class="line">    class C  </span><br><span class="line">    &#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">    static class D  </span><br><span class="line">    &#123;  </span><br><span class="line">          </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>C类相当于B类的成员变量，故不能在静态方法中new出实例（记住：类中的静态方法不能直接调用动态方法）。<br>否则会提示错误：<br>No enclosing instance of type B is accessible. Must qualify the allocation with an enclosing instance of type B (e.g. x.new A() where x is an instance of B).<br>2.protected修饰的构造器在包内部可以被new实例，在其他包非子类中不能被new实例。其他包子类可以访问(包括匿名类)：<br>domain包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package cn.edu.chd.domain;  </span><br><span class="line">public class A  </span><br><span class="line">&#123;  </span><br><span class="line">    protected A()&#123;  </span><br><span class="line">        System.out.println(&quot;A constructor&quot;);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>test包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package cn.edu.chd.test;  </span><br><span class="line">import cn.edu.chd.domain.A;  </span><br><span class="line">public class B  </span><br><span class="line">&#123;  </span><br><span class="line">    public static void main(String[] args)  </span><br><span class="line">    &#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">    public void func()  </span><br><span class="line">    &#123;  </span><br><span class="line">        new A();//错误!!!The constructor A() is not visible  </span><br><span class="line">        new C();//正确，A的子类可以调A类的protected构造器  </span><br><span class="line">      new A()&#123;&#125;;//正确，其实这个匿名内部类就相当于new了A的子类    </span><br><span class="line">    &#125;  </span><br><span class="line">    class C extends A  </span><br><span class="line">    &#123;//C类的无参构造器其实调用了super.A()  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.类前面的修饰词只有三种（public/abstract/final）,当然内部类除外。<br>4.访问权限问题：<br>类中某成员(方法或属性,method or field)的访问权限:<br>1、package(或称为friendly，但不用写出，friendly也不是关键字)权限，在同一包中的类和继承该类的子类可以访问；<br>2、public权限，任何类都可以访问；<br>3、private权限，该类内部的成员(方法、属性、内部类)可以访问，连该类的实例对象都不可以访问；<br>4、protected权限，继承访问权限，包内其余类和继承该类的子类可以访问，跟friendly权限差不多。<br>类中构造函数的访问权限:<br>1、public 很简单，不说了<br>2、protected 构造函数可以被继承该类的子类调用，但不能在包外或子类以外的地方被调用用来产生实例<br>3、private 该类无法被继承<br>内部类的访问权限:<br>1、public 任何地方均可访问<br>2、protected 在同一个包内均可访问，不同的包的子类可以访问。（A有内部类B，C与A不同包，C继承自A，则C可以访问B）<br>3、friendly(即默认权限) 同一个包内才可以访问<br>4、private 只有该内部类的外部类本身可以访问<br>类的访问权限:<br>1、public 任何地方均可访问<br>2、friendly 即默认权限，又称为package权限，在同一个包内可访问</p>
+<p>5.抽象类是以abstract修饰的类，这个类里面可以有抽象的方法也可以没有！！<br>（1）.抽象类不一定有抽象方法，但是有抽象方法的类一定是抽象类。<br>（2）.抽象类不能被实例化！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">package cn.edu.chd.demo;  </span><br><span class="line">public abstract class Demo  </span><br><span class="line">&#123;  </span><br><span class="line">//    public abstract void func();//没有抽象方法也叫抽象类，比如HttpServlet类  </span><br><span class="line">    public void func1()  </span><br><span class="line">    &#123;  </span><br><span class="line">          </span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>6.类上声明的泛型只对非静态成员有效</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package cn.edu.chd.basic;  </span><br><span class="line">public class Demo&lt;T&gt;  </span><br><span class="line">&#123;  </span><br><span class="line">    public void aa(T t)  </span><br><span class="line">    &#123;     </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    public void bb(T t1,T t2)  </span><br><span class="line">    &#123;      </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">//    类上声明的泛型只对非静态成员有效  </span><br><span class="line">    public static &lt;T&gt; void cc(T t)  </span><br><span class="line">    &#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>7.finally块中代码不执行的一种情况</p>
+<p><strong><em>System.exit()的作用是中止当前虚拟机，虚拟机都被中止了，finally代码块自然不会执行。</em></strong></p>
+<p><strong><em>java线程分为两类，守护线程和非守护线程。当所有的非守护线程中止时，不论存不存在守护线程，虚拟机都会kill掉守护线程从而中止程序。 虚拟机中，执行main方法的线程就是一个非守护线程，垃圾回收则是另一个守护线程，main执行完，程序就中止了，而不管垃圾回收线程是否中止。 所以，如果守护线程中存在finally代码块，那么当所有的非守护线程中止时，守护线程被kill掉，其finally代码块是不会执行的。</em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package  demo;  </span><br><span class="line">/** </span><br><span class="line"> *  @author   Rowand   jj </span><br><span class="line"> *这种情况下finally块中代码不执行 </span><br><span class="line"> */  </span><br><span class="line">public   class  TryDemo  </span><br><span class="line">&#123;  </span><br><span class="line">     public   static   void  main(String[] args)  </span><br><span class="line">    &#123;  </span><br><span class="line">         try  </span><br><span class="line">        &#123;  </span><br><span class="line">            System. out .println( &quot;aaaa&quot; );  </span><br><span class="line">            System. exit (1);  </span><br><span class="line">        &#125;  catch  (Exception e)  </span><br><span class="line">        &#123;  </span><br><span class="line">             //  TODO : handle exception  </span><br><span class="line">        &#125;  </span><br><span class="line">         finally  </span><br><span class="line">        &#123;  </span><br><span class="line">            System. out .println( &quot;ha&quot; );  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>8.final 修饰的变量，其引用的对象不可以改变，但是我们可以改变对象的内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public   class  Deemo  </span><br><span class="line">&#123;  </span><br><span class="line">     public   static   void  main(String[] args)  </span><br><span class="line">    &#123;  </span><br><span class="line">         final   Person  p =  new   Person ( &quot;zhangsan&quot; ,11);  </span><br><span class="line">        p.setAge(12);//可以  </span><br><span class="line">        System. out .println(p.getAge());   </span><br><span class="line">//        p = new Person(&quot; lisi &quot;,22); //错误  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">class   Person  </span><br><span class="line">&#123;  </span><br><span class="line">     int   age ;  </span><br><span class="line">    String  name ;  </span><br><span class="line">      </span><br><span class="line">     public  Person(String name, int  age)  </span><br><span class="line">    &#123;  </span><br><span class="line">         this . name  = name;  </span><br><span class="line">         this . age  = age;  </span><br><span class="line">    &#125;  </span><br><span class="line">     public   int  getAge()  </span><br><span class="line">    &#123;  </span><br><span class="line">         return   age ;  </span><br><span class="line">    &#125;  </span><br><span class="line">     public   void  setAge( int  age)  </span><br><span class="line">    &#123;  </span><br><span class="line">         this . age  = age;  </span><br><span class="line">    &#125;  </span><br><span class="line">     public  String getName()  </span><br><span class="line">    &#123;  </span><br><span class="line">         return   name ;  </span><br><span class="line">    &#125;  </span><br><span class="line">     public   void  setName(String name)  </span><br><span class="line">    &#123;  </span><br><span class="line">         this . name  = name;  </span><br><span class="line">    &#125;  </span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/26/public-protect-private的作用/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-广播" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -720,77 +800,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2017/12/21/关于io/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-MarkDown语法提示" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/21/MarkDown语法提示/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/21/MarkDown语法提示/" class="archive-article-date">
-  	<time datetime="2017-12-21T02:14:16.131Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/21/MarkDown语法提示/">展开全文 >></a>
         </p>
       
 
