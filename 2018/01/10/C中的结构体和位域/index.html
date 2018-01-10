@@ -6,14 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives | </title>
+  <title>C中的结构体和位域 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title">
-<meta property="og:url" content="http://yoursite.com/archives/page/3/index.html">
+  <meta name="description" content="结构体类似对象，声明方式 struct+结构体名+{结构体内容}+变量名（可以先不声明对象）：12345678910111213141516struct [structure tag]&amp;#123;   member definition;   member definition;   ...   member definition;&amp;#125; [one or more structure var">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C中的结构体和位域">
+<meta property="og:url" content="http://yoursite.com/2018/01/10/C中的结构体和位域/index.html">
 <meta property="og:site_name">
+<meta property="og:description" content="结构体类似对象，声明方式 struct+结构体名+{结构体内容}+变量名（可以先不声明对象）：12345678910111213141516struct [structure tag]&amp;#123;   member definition;   member definition;   ...   member definition;&amp;#125; [one or more structure var">
+<meta property="og:updated_time" content="2018-01-10T06:09:39.154Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title">
+<meta name="twitter:title" content="C中的结构体和位域">
+<meta name="twitter:description" content="结构体类似对象，声明方式 struct+结构体名+{结构体内容}+变量名（可以先不声明对象）：12345678910111213141516struct [structure tag]&amp;#123;   member definition;   member definition;   ...   member definition;&amp;#125; [one or more structure var">
   
     <link rel="alternative" href="/atom.xml" title="" type="application/atom+xml">
   
@@ -147,295 +151,108 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-C中的结构体和位域" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      C中的结构体和位域
+    </h1>
+  
+
+        
+        <a href="/2018/01/10/C中的结构体和位域/" class="archive-article-date">
+  	<time datetime="2018-01-10T03:24:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-10</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h3><p>类似对象，声明方式 struct+结构体名+{结构体内容}+变量名（可以先不声明对象）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">struct [structure tag]</span><br><span class="line">&#123;</span><br><span class="line">   member definition;</span><br><span class="line">   member definition;</span><br><span class="line">   ...</span><br><span class="line">   member definition;</span><br><span class="line">&#125; [one or more structure variables];  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">struct Books</span><br><span class="line">&#123;</span><br><span class="line">   char  title[50];</span><br><span class="line">   char  author[50];</span><br><span class="line">   char  subject[100];</span><br><span class="line">   int   book_id;</span><br><span class="line">&#125; book;</span><br></pre></td></tr></table></figure></p>
+<h4 id="访问结构成员"><a href="#访问结构成员" class="headerlink" title="访问结构成员"></a>访问结构成员</h4><p>为了访问结构的成员，我们使用成员访问运算符（.）。成员访问运算符是结构变量名称和我们要访问的结构成员之间的一个句号。您可以使用 struct 关键字来定义结构类型的变量。</p>
+<h4 id="结构体作为参数"><a href="#结构体作为参数" class="headerlink" title="结构体作为参数"></a>结构体作为参数</h4><p>和普通变量类似<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void printBook( struct Books book )</span><br><span class="line">&#123;</span><br><span class="line">   printf( &quot;Book title : %s\n&quot;, book.title);</span><br><span class="line">   printf( &quot;Book author : %s\n&quot;, book.author);</span><br><span class="line">   printf( &quot;Book subject : %s\n&quot;, book.subject);</span><br><span class="line">   printf( &quot;Book book_id : %d\n&quot;, book.book_id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="指向结构的指针"><a href="#指向结构的指针" class="headerlink" title="指向结构的指针"></a>指向结构的指针</h4><p>您可以定义指向结构的指针，方式与定义指向其他类型变量的指针相似</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">struct Books *struct_pointer;</span><br></pre></td></tr></table></figure>
+<p>现在，您可以在上述定义的指针变量中存储结构变量的地址。为了查找结构变量的地址，请把 &amp; 运算符放在结构名称的前面，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">struct_pointer = &amp;Book1;</span><br></pre></td></tr></table></figure>
+<p>为了使用指向该结构的指针访问结构的成员，您必须使用 -&gt; 运算符。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">struct_pointer-&gt;title;</span><br></pre></td></tr></table></figure>
+<h3 id="位域"><a href="#位域" class="headerlink" title="位域"></a>位域</h3><p>有些信息在存储时，并不需要占用一个完整的字节，而只需占几个或一个二进制位。例如在存放一个开关量时，只有 0 和 1 两种状态，用 1 位二进位即可。为了节省存储空间，并使处理简便，C 语言又提供了一种数据结构，称为”位域”或”位段”。<br>所谓”位域”是把一个字节中的二进位划分为几个不同的区域，并说明每个区域的位数。每个域有一个域名，允许在程序中按域名进行操作。这样就可以把几个不同的对象用一个字节的二进制位域来表示。<br>典型的实例：<br>    <em>用 1 位二进位存放一个开关量时，只有 0 和 1 两种状态。</em><br>    <em>读取外部文件格式——可以读取非标准的文件格式。例如：9 位的整数。</em></p>
+<h4 id="位域的定义"><a href="#位域的定义" class="headerlink" title="位域的定义"></a>位域的定义</h4><p>和结构体类似<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">struct 位域结构名</span><br><span class="line">     &#123; 位域列表 &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>其中位域列表的形式为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">类型说明符 位域名: 位域长度</span><br></pre></td></tr></table></figure></p>
+<p>例如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct bs&#123;</span><br><span class="line">    int a:8;</span><br><span class="line">    int b:2;</span><br><span class="line">    int c:6;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h4 id="要注意的地方"><a href="#要注意的地方" class="headerlink" title="要注意的地方"></a>要注意的地方</h4><p>1.一个位域必须存储在同一个字节中，不能跨两个字节。如一个字节所剩空间不够存放另一位域时，应从下一单元起存放该位域。也可以有意使某位域从下一单元开始。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct bs&#123;</span><br><span class="line">    unsigned a:4;</span><br><span class="line">    unsigned  :4;    /* 空域 */</span><br><span class="line">    unsigned b:4;    /* 从下一单元开始存放 */</span><br><span class="line">    unsigned c:4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这个位域定义中，a 占第一字节的 4 位，后 4 位填 0 表示不使用，b 从第二字节开始，占用 4 位，c 占用 4 位。</p>
+<p>2.由于位域不允许跨两个字节，因此位域的长度不能大于一个字节的长度，也就是说不能超过8位二进位。如果最大长度大于计算机的整数字长，一些编译器可能会允许域的内存重叠，另外一些编译器可能会把大于一个域的部分存储在下一个字中。</p>
+<p>3.位域可以是无名位域，这时它只用来作填充或调整位置。无名的位域是不能使用的。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/26/service/" class="archive-article-date">
-  	<time datetime="2017-12-26T03:08:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/26/service/">service</a>
-    </h1>
-  
+      
 
-        <div class="article-info info-on-right">
-          
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/26/进程优先级/" class="archive-article-date">
-  	<time datetime="2017-12-26T03:03:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2018/01/10/C中的共用体/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          C中的共用体
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/01/09/关于C的数据类型/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">关于C的数据类型</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/26/进程优先级/">进程优先级</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/26/public-protect-private的作用/" class="archive-article-date">
-  	<time datetime="2017-12-26T02:18:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/26/public-protect-private的作用/">public,protect,private的作用</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/广播/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:56:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/广播/">广播</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/res-raw与assets区别/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:55:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/res-raw与assets区别/">res/raw与assets区别</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/内容提供者/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:52:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/内容提供者/">内容提供者</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/25/java注解/" class="archive-article-date">
-  	<time datetime="2017-12-25T09:38:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/25/java注解/">java注解</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/Loader/" class="archive-article-date">
-  	<time datetime="2017-12-21T09:47:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/Loader/">Loader</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/hello-world/" class="archive-article-date">
-  	<time datetime="2017-12-21T06:55:29.956Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/hello-world/">MarkDown语法提示</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/21/代理模式/" class="archive-article-date">
-  	<time datetime="2017-12-21T03:37:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/21/代理模式/">代理模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/page/2/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/4/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -459,8 +276,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
