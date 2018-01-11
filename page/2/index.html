@@ -149,6 +149,227 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-touch事件分发机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/03/touch事件分发机制/">touch事件分发机制</a>
+    </h1>
+  
+
+        
+        <a href="/2018/01/03/touch事件分发机制/" class="archive-article-date">
+  	<time datetime="2018-01-03T03:48:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>以下打印的日志均为activity嵌套一个linearlayout，linearlayout嵌套一个button的情况。</p>
+<h2 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h2><p>在touch事件的分发机制中，Activity是顶层控件，事件由activity分发出来。<br>Activity中有两个方法和事件分发有关，dispatchTouchEvent，onTouchEvent。<br>调用顺序是先dispatchTouchEvent，若子控件都不处理事件，则调用activity的onTouchEvent方法</p>
+<p>其中dispatchTouchEvent主要控制事件的分发，其返回值为true时，表示事件被消费，不往下传递事件，后续事件仍由这个方法来消费。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>而当其返回值为false时，表示不分发事件，所以也不往下传递事件。由于activity比较特殊，所以即使不分发事件，后续事件也会由该方法来处理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>若要重写Activity的dispatchTouchEvent方法，只有返回值是super.dispatchTouchEvent(ev)才能有效往下传递事件</p>
+<h2 id="View"><a href="#View" class="headerlink" title="View"></a>View</h2><p>View控件是根控件，其与事件分发有关的方法是dispatchTouchEvent和onTouchEvent。与activity类似。<br>默认调用顺序是先dispatchTouchEvent后onTouchEvent。</p>
+<p>当dispatchTouchEvent返回值是true时表示消费该事件，View将不会调用onTouchEvent，但是后续的事件处理Activity仍会交给该View，也就是说在容器控件没有拦截或消费事件的情况下，若dispatchTouchEvent的返回值是true，则会出现以下情况.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_UP</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_UP</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>当dispatchTouchEvent返回值是false时，表示该View不关心本次事件，所以不会调用onTouchEvent，事件交由上一级控件去处理，后续事件也不再调用dispatchTouchEvent方法（指同一次事件，即MOVE和UP事件）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>当dispatchTouchEvent返回值是super.dispatchTouchEvent(event)时，事件正常分发，将会调用View的onTouchEvent方法。<br>当onTouchEvent方法返回值是true时，表示View处理本次事件，因此后续事件Acitvity也将交由该View处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_UP</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_UP</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_UP</span><br><span class="line">E/onTouchEvent: ---mButton---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>当onTouchEvent方法返回值是false时，表示该View不处理本次事件，后续事件将不再分发给该View，而是发给处理本次事件的控件（同一次事件）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_UP</span><br></pre></td></tr></table></figure>
+<h2 id="ViewGroup"><a href="#ViewGroup" class="headerlink" title="ViewGroup"></a>ViewGroup</h2><p>ViewGroup中涉及事件处理的方法是dispatchTouchEvent，onInterceptTouchEvent，onTouchEvent。<br>其默认调用顺序是dispatchTouchEvent&gt;onInterceptTouchEvent&gt;onTouchEvent<br>其中dispatchTouchEvent与activity和view中的原理类似。<br>当dispatchTouchEvent返回值为true时</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>当dispatchTouchEvent返回值为false时</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>当dispatchTouchEvent返回值是super.dispatchTouchEvent(ev)时，接着会调用onInterceptTouchEvent方法。<br>当onInterceptTouchEvent方法返回值为true时，表示拦截事件，事件将不会往下传递，但是仍会调用自身的onTouchEvent方法，若不处理事件，则事件交由上一层控件处理。在本例中button将不会收到事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/onTouchEvent: ---activity---ACTION_UP</span><br></pre></td></tr></table></figure>
+<p>当onInterceptTouchEvent返回值是false时，表示不拦截事件，若该ViewGroup不处理事件，则事件将会往下传递。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">E/dispatchTouchEvent: ---activity---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/onTouchEvent: ---mButton---ACTION_DOWN</span><br><span class="line">E/dispatchTouchEvent: ---activity---ACTION_UP</span><br><span class="line">E/dispatchTouchEvent: ---mLinearLayout---ACTION_UP</span><br><span class="line">E/onInterceptTouchEvent: ---mLinearLayout---ACTION_UP</span><br><span class="line">E/dispatchTouchEvent: ---mButton---ACTION_UP</span><br><span class="line">E/onTouchEvent: ---mButton---ACTION_UP</span><br></pre></td></tr></table></figure></p>
+<p>onTouchEvent的处理方式参照View，不再赘述。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>touch事件的传递总体来说是从activity开始，依次向下传递，依次由各层级判断是否消费或分发或拦截，但是一个事件若能正常传到根View，则处理事件的权限恰好相反，由View的onTouchEvent方法决定是否要处理事件，若不处理，则往回依次传递。若都不处理，最终才由activity响应onTouchEvent事件。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/01/03/touch事件分发机制/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Class文件的加载过程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/03/Class文件的加载过程/">Class文件的加载过程</a>
+    </h1>
+  
+
+        
+        <a href="/2018/01/03/Class文件的加载过程/" class="archive-article-date">
+  	<time datetime="2018-01-03T03:34:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在class文件中描述的各种信息，最终都需要被加载到虚拟机中之后，才能被运行和使用。<br>虚拟机把描述类的数据从class文件加载到内存，并对数据进行校验，转换，解析和初始化，最终形成可以被虚拟机直接使用的java类型，这就是虚拟机的类加载机制。</p>
+<p>类加载的时机：<br>类从被加载到虚拟机内存开始，到卸载出内存为止，其生命周期包括：<br>加载（loading），验证（verification），准备(preparation)，解析(resolution)，初始化(initialization)，使用(using)，卸载（unloading）。<br>需要对类进行初始化的情况：<br>1.遇到new,jestatic,putstatic,invokestatic这四条字节码指令。<br>场景：使用new关键字实例化对象，读取或设置一个类的静态字段，调用一个类的静态方法<br>2.使用java.lang.Reflect包的方法对类进行反射调用时。<br>3.当初始化一个类的时候，如果发现其父类还没有进行过初始化。<br>4.当虚拟机启动时，用户需要指定一个要执行的主类，虚拟机会先初始化这个主类。</p>
+<p>类加载过程</p>
+<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><p>1.通过一个类的全限定名来获取定义此类的二进制字节流<br>2.将这个字节流所代表的静态存储结构转化成方法区的运行时数据结构<br>3.在java堆里生成代表这个类的java.lang.Class对象，作为方法区这些数据的访问入口。</p>
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>具体包括<br>1.文件格式验证<br>2.元数据验证<br>3.字节码验证<br>4.符号引用验证</p>
+<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>准备阶段是正式为变量分配内存并设置变量初始值的阶段，这些内训都将在方法区进行分配。<br>注意：这时候进行内存分配的仅包括类变量（被static修饰的变量），而不包括成员变量，实例变量将在对象实例化的时候随着对象的实例一起被分配到java堆中。</p>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>虚拟机将常量池内的符号引用替换为直接引用的过程</p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>到初始化阶段，才真正开始执行类中定义的java程序代码</p>
+<p>双亲委派机制：如果一个类加载器收到了类加载的请求，它首先不会尝试自己去加载这个类，而是把这个请求委派给父类加载器去完成，每一层的类加载器都是如此，因此所有的加载请求最终都应该被传送到顶层启动类的加载器中，只有父加载器反馈自己无法完成加载请求时，子加载器才会尝试自己去加载。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/01/03/Class文件的加载过程/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-GestureDetector处理手势" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/03/GestureDetector处理手势/">GestureDetector处理手势</a>
+    </h1>
+  
+
+        
+        <a href="/2018/01/03/GestureDetector处理手势/" class="archive-article-date">
+  	<time datetime="2018-01-03T02:22:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>GestureDetector类用于检测一系列由 MotionEvent提供的手势事件，当特定的手势事件发生时，通过调用<br>GestureDetector.OnGestureDetectorListener接口中定义的回调函数通知用户。<br>使用方式：<br>1.为你的view创建一个GestureDetector的实例；<br>2.覆写view的onTouchEvent，并调用GestureDetector的OnTouchEvent方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener &#123;</span><br><span class="line"></span><br><span class="line">    GestureDetector gestureDetector;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        gestureDetector = new GestureDetector(this,this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onTouchEvent(MotionEvent event) &#123;</span><br><span class="line">        return gestureDetector.onTouchEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onDown(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onDown&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onShowPress(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onShowPress&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onSingleTapUp(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onSingleTapUp&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onScroll&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onLongPress(MotionEvent e) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onLongPress&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) &#123;</span><br><span class="line">        Toast.makeText(this,&quot;onFling&quot;,Toast.LENGTH_SHORT).show();</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/01/03/GestureDetector处理手势/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-java内存区域" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -627,202 +848,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2017/12/26/Handler源码分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-AsyncTask源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/AsyncTask源码分析/">AsyncTask源码分析</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/AsyncTask源码分析/" class="archive-article-date">
-  	<time datetime="2017-12-26T07:31:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>从excute方法开始,参数由用户传入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * Executes the task with the specified parameters. The task returns</span><br><span class="line">     * itself (this) so that the caller can keep a reference to it.</span><br><span class="line">     * </span><br><span class="line">     * &lt;p&gt;Note: this function schedules the task on a queue for a single background</span><br><span class="line">     * thread or pool of threads depending on the platform version.  When first</span><br><span class="line">     * introduced, AsyncTasks were executed serially on a single background thread.</span><br><span class="line">     * Starting with &#123;@link android.os.Build.VERSION_CODES#DONUT&#125;, this was changed</span><br><span class="line">     * to a pool of threads allowing multiple tasks to operate in parallel. Starting</span><br><span class="line">     * &#123;@link android.os.Build.VERSION_CODES#HONEYCOMB&#125;, tasks are back to being</span><br><span class="line">     * executed on a single thread to avoid common application errors caused</span><br><span class="line">     * by parallel execution.  If you truly want parallel execution, you can use</span><br><span class="line">     * the &#123;@link #executeOnExecutor&#125; version of this method</span><br><span class="line">     * with &#123;@link #THREAD_POOL_EXECUTOR&#125;; however, see commentary there for warnings</span><br><span class="line">     * on its use.</span><br><span class="line">     *</span><br><span class="line">     * &lt;p&gt;This method must be invoked on the UI thread.</span><br><span class="line">     *</span><br><span class="line">     * @param params The parameters of the task.</span><br><span class="line">     *</span><br><span class="line">     * @return This instance of AsyncTask.</span><br><span class="line">     *</span><br><span class="line">     * @throws IllegalStateException If &#123;@link #getStatus()&#125; returns either</span><br><span class="line">     *         &#123;@link AsyncTask.Status#RUNNING&#125; or &#123;@link AsyncTask.Status#FINISHED&#125;.</span><br><span class="line">     *</span><br><span class="line">     * @see #executeOnExecutor(java.util.concurrent.Executor, Object[])</span><br><span class="line">     * @see #execute(Runnable)</span><br><span class="line">     */</span><br><span class="line">    @MainThread</span><br><span class="line">    public final AsyncTask&lt;Params, Progress, Result&gt; execute(Params... params) &#123;</span><br><span class="line">        return executeOnExecutor(sDefaultExecutor, params);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>接着调用executeOnExecutor方法。主要内容是，判断异常状态，给现有状态赋值，调用抽象方法onPreExecute，给mWorker.mParams赋值，执行sDefaultExecutor，参数是mFuture（SerialExecutor的excute方法）<br>sDefaultExecutor是SerialExecutor的一个实例,可以通过setDefaultExecutor来改变该值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@MainThread</span><br><span class="line">    public final AsyncTask&lt;Params, Progress, Result&gt; executeOnExecutor(Executor exec,</span><br><span class="line">            Params... params) &#123;</span><br><span class="line">        if (mStatus != Status.PENDING) &#123;</span><br><span class="line">            switch (mStatus) &#123;</span><br><span class="line">                case RUNNING:</span><br><span class="line">                    throw new IllegalStateException(&quot;Cannot execute task:&quot;</span><br><span class="line">                            + &quot; the task is already running.&quot;);</span><br><span class="line">                case FINISHED:</span><br><span class="line">                    throw new IllegalStateException(&quot;Cannot execute task:&quot;</span><br><span class="line">                            + &quot; the task has already been executed &quot;</span><br><span class="line">                            + &quot;(a task can be executed only once)&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mStatus = Status.RUNNING;</span><br><span class="line"></span><br><span class="line">        onPreExecute();</span><br><span class="line"></span><br><span class="line">        mWorker.mParams = params;</span><br><span class="line">        exec.execute(mFuture);</span><br><span class="line"></span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>再来看看mFuture，在构造方法中，定义了mWorker和mFuture。mFuture是Runnable的子类，mWorker是Callable的子类。<br>mWorker当做参数传入了mFuture的构造方法中。<br>下面看一下mFuture的构造方法和get方法以及run方法分别做了什么事情。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">public AsyncTask() &#123;</span><br><span class="line">        mWorker = new WorkerRunnable&lt;Params, Result&gt;() &#123;</span><br><span class="line">            public Result call() throws Exception &#123;</span><br><span class="line">                mTaskInvoked.set(true);</span><br><span class="line">                Result result = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line">                    //noinspection unchecked</span><br><span class="line">                    result = doInBackground(mParams);</span><br><span class="line">                    Binder.flushPendingCommands();</span><br><span class="line">                &#125; catch (Throwable tr) &#123;</span><br><span class="line">                    mCancelled.set(true);</span><br><span class="line">                    throw tr;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    postResult(result);</span><br><span class="line">                &#125;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        mFuture = new FutureTask&lt;Result&gt;(mWorker) &#123;</span><br><span class="line">            @Override</span><br><span class="line">            protected void done() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    postResultIfNotInvoked(get());</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    android.util.Log.w(LOG_TAG, e);</span><br><span class="line">                &#125; catch (ExecutionException e) &#123;</span><br><span class="line">                    throw new RuntimeException(&quot;An error occurred while executing doInBackground()&quot;,</span><br><span class="line">                            e.getCause());</span><br><span class="line">                &#125; catch (CancellationException e) &#123;</span><br><span class="line">                    postResultIfNotInvoked(null);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">private void postResultIfNotInvoked(Result result) &#123;</span><br><span class="line">        final boolean wasTaskInvoked = mTaskInvoked.get();</span><br><span class="line">        if (!wasTaskInvoked) &#123;</span><br><span class="line">            postResult(result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>构造方法中给callable赋值，也就是把传进来的mWorker保存为成员变量。<br>get方法貌似是做结果回调的。<br>run方法会在上面提到的executeOnExecutor方法中被调用。而在run方法中，Callable<v> c = callable;，result = c.call()。mWorker最终是在这里被调用。<br>也就是在AsyncTask的executeOnExecutor方法中被调用。当调用结束时，结果通过done方法返回。</v></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public FutureTask(Callable&lt;V&gt; callable) &#123;</span><br><span class="line">        if (callable == null)</span><br><span class="line">            throw new NullPointerException();</span><br><span class="line">        this.callable = callable;</span><br><span class="line">        this.state = NEW;       // ensure visibility of callable</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public V get() throws InterruptedException, ExecutionException &#123;</span><br><span class="line">        int s = state;</span><br><span class="line">        if (s &lt;= COMPLETING)</span><br><span class="line">            s = awaitDone(false, 0L);</span><br><span class="line">        return report(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public void run() &#123;</span><br><span class="line">        if (state != NEW ||</span><br><span class="line">            !U.compareAndSwapObject(this, RUNNER, null, Thread.currentThread()))</span><br><span class="line">            return;</span><br><span class="line">        try &#123;</span><br><span class="line">            Callable&lt;V&gt; c = callable;</span><br><span class="line">            if (c != null &amp;&amp; state == NEW) &#123;</span><br><span class="line">                V result;</span><br><span class="line">                boolean ran;</span><br><span class="line">                try &#123;</span><br><span class="line">                    result = c.call();</span><br><span class="line">                    ran = true;</span><br><span class="line">                &#125; catch (Throwable ex) &#123;</span><br><span class="line">                    result = null;</span><br><span class="line">                    ran = false;</span><br><span class="line">                    setException(ex);</span><br><span class="line">                &#125;</span><br><span class="line">                if (ran)</span><br><span class="line">                    set(result);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            // runner must be non-null until state is settled to</span><br><span class="line">            // prevent concurrent calls to run()</span><br><span class="line">            runner = null;</span><br><span class="line">            // state must be re-read after nulling runner to prevent</span><br><span class="line">            // leaked interrupts</span><br><span class="line">            int s = state;</span><br><span class="line">            if (s &gt;= INTERRUPTING)</span><br><span class="line">                handlePossibleCancellationInterrupt(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>而我们实现的doInBackground方法，则是在mWorker的call方法中调用。这里的结果result最终是给了上一段代码中的result，走的是mFuture的结果回调。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mWorker = new WorkerRunnable&lt;Params, Result&gt;() &#123;</span><br><span class="line">            public Result call() throws Exception &#123;</span><br><span class="line">                mTaskInvoked.set(true);</span><br><span class="line">                Result result = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);</span><br><span class="line">                    //noinspection unchecked</span><br><span class="line">                    result = doInBackground(mParams);</span><br><span class="line">                    Binder.flushPendingCommands();</span><br><span class="line">                &#125; catch (Throwable tr) &#123;</span><br><span class="line">                    mCancelled.set(true);</span><br><span class="line">                    throw tr;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    postResult(result);</span><br><span class="line">                &#125;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
-<p>关于线程切换<br>所有的任务其实真正由THREAD_POOL_EXECUTOR来完成线程的切换和线程的管理。THREAD_POOL_EXECUTOR被初始化为ThreadPoolExecutor的实例。<br>结果回调在postResult方法中用handler回到主线程。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public static final Executor THREAD_POOL_EXECUTOR;</span><br><span class="line"></span><br><span class="line">static &#123;</span><br><span class="line">        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(</span><br><span class="line">                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,</span><br><span class="line">                sPoolWorkQueue, sThreadFactory);</span><br><span class="line">        threadPoolExecutor.allowCoreThreadTimeOut(true);</span><br><span class="line">        THREAD_POOL_EXECUTOR = threadPoolExecutor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">private static class SerialExecutor implements Executor &#123;</span><br><span class="line">        final ArrayDeque&lt;Runnable&gt; mTasks = new ArrayDeque&lt;Runnable&gt;();</span><br><span class="line">        Runnable mActive;</span><br><span class="line"></span><br><span class="line">        public synchronized void execute(final Runnable r) &#123;</span><br><span class="line">            mTasks.offer(new Runnable() &#123;</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        r.run();</span><br><span class="line">                    &#125; finally &#123;</span><br><span class="line">                        scheduleNext();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            if (mActive == null) &#123;</span><br><span class="line">                scheduleNext();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        protected synchronized void scheduleNext() &#123;</span><br><span class="line">            if ((mActive = mTasks.poll()) != null) &#123;</span><br><span class="line">                THREAD_POOL_EXECUTOR.execute(mActive);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/AsyncTask源码分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-webview" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/webview/">webview</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/webview/" class="archive-article-date">
-  	<time datetime="2017-12-26T06:59:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/webview/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-图片处理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/26/图片处理/">图片处理</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/26/图片处理/" class="archive-article-date">
-  	<time datetime="2017-12-26T03:13:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/26/图片处理/">展开全文 >></a>
         </p>
       
 

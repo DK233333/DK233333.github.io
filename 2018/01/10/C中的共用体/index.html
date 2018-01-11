@@ -8,13 +8,16 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>C中的共用体 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="共用体是一种特殊的数据类型，允许您在相同的内存位置存储不同的数据类型。您可以定义一个带有多成员的共用体，但是任何时候只能有一个成员带有值。共用体提供了一种使用相同的内存位置的有效方式。 为了定义共用体，您必须使用 union 语句，方式与定义结构类似。union 语句定义了一个新的数据类型，带有多个成员。union 语句的格式如下： 1234567union [union tag]&amp;#123;">
+<meta property="og:type" content="article">
 <meta property="og:title" content="C中的共用体">
 <meta property="og:url" content="http://yoursite.com/2018/01/10/C中的共用体/index.html">
 <meta property="og:site_name">
-<meta property="og:updated_time" content="2018-01-10T06:10:44.204Z">
+<meta property="og:description" content="共用体是一种特殊的数据类型，允许您在相同的内存位置存储不同的数据类型。您可以定义一个带有多成员的共用体，但是任何时候只能有一个成员带有值。共用体提供了一种使用相同的内存位置的有效方式。 为了定义共用体，您必须使用 union 语句，方式与定义结构类似。union 语句定义了一个新的数据类型，带有多个成员。union 语句的格式如下： 1234567union [union tag]&amp;#123;">
+<meta property="og:updated_time" content="2018-01-11T08:35:07.359Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C中的共用体">
+<meta name="twitter:description" content="共用体是一种特殊的数据类型，允许您在相同的内存位置存储不同的数据类型。您可以定义一个带有多成员的共用体，但是任何时候只能有一个成员带有值。共用体提供了一种使用相同的内存位置的有效方式。 为了定义共用体，您必须使用 union 语句，方式与定义结构类似。union 语句定义了一个新的数据类型，带有多个成员。union 语句的格式如下： 1234567union [union tag]&amp;#123;">
   
     <link rel="alternative" href="/atom.xml" title="" type="application/atom+xml">
   
@@ -168,7 +171,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>共用体是一种特殊的数据类型，允许您在相同的内存位置存储不同的数据类型。您可以定义一个带有多成员的共用体，但是任何时候只能有一个成员带有值。共用体提供了一种使用相同的内存位置的有效方式。</p>
+<p>为了定义共用体，您必须使用 union 语句，方式与定义结构类似。union 语句定义了一个新的数据类型，带有多个成员。union 语句的格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">union [union tag]</span><br><span class="line">&#123;</span><br><span class="line">   member definition;</span><br><span class="line">   member definition;</span><br><span class="line">   ...</span><br><span class="line">   member definition;</span><br><span class="line">&#125; [one or more union variables];</span><br></pre></td></tr></table></figure>
+<p>union tag 是可选的，每个 member definition 是标准的变量定义，比如 int i; 或者 float f; 或者其他有效的变量定义。在共用体定义的末尾，最后一个分号之前，您可以指定一个或多个共用体变量，这是可选的。下面定义一个名为 Data 的共用体类型，有三个成员 i、f 和 str：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">union Data</span><br><span class="line">&#123;</span><br><span class="line">   int i;</span><br><span class="line">   float f;</span><br><span class="line">   char  str[20];</span><br><span class="line">&#125; data;</span><br></pre></td></tr></table></figure>
+<p>共用体占用的内存应足够存储共用体中最大的成员。例如，在上面的实例中，Data 将占用 20 个字节的内存空间，因为在各个成员中，字符串所占用的空间是最大的。下面的实例将显示上面的共用体占用的总内存大小：</p>
+
       
 
       
@@ -188,6 +197,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2018/01/11/typedef和-define/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          typedef和#define
+        
+      </div>
+    </a>
   
   
     <a href="/2018/01/10/C中的结构体和位域/" id="article-nav-older" class="article-nav-link-wrap">
