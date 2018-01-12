@@ -149,6 +149,147 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-时间复杂度和空间复杂度" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/12/时间复杂度和空间复杂度/">时间复杂度和空间复杂度</a>
+    </h1>
+  
+
+        
+        <a href="/2018/01/12/时间复杂度和空间复杂度/" class="archive-article-date">
+  	<time datetime="2018-01-12T08:41:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/01/12/时间复杂度和空间复杂度/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-关于finally" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/12/关于finally/">关于finally</a>
+    </h1>
+  
+
+        
+        <a href="/2018/01/12/关于finally/" class="archive-article-date">
+  	<time datetime="2018-01-12T06:31:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="finally中的语句不是一定会执行"><a href="#finally中的语句不是一定会执行" class="headerlink" title="finally中的语句不是一定会执行"></a>finally中的语句不是一定会执行</h3><p>首先若在执行finally对应的try语句之前方法就执行了return，那么finally将不会执行<br>其次，若执行到了finally对应的try语句，如果在try中的return语句之前执行了System.exit(0)，则java虚拟机退出，finally语句不执行。<br>若在执行try语句时，所在线程被杀死，那么finally语句同样不会执行。</p>
+<h3 id="try，catch，finally的执行顺序"><a href="#try，catch，finally的执行顺序" class="headerlink" title="try，catch，finally的执行顺序"></a>try，catch，finally的执行顺序</h3><p>基本顺序是try&gt;catch&gt;finally</p>
+<h3 id="关于finally语句和return语句的关系"><a href="#关于finally语句和return语句的关系" class="headerlink" title="关于finally语句和return语句的关系"></a>关于finally语句和return语句的关系</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class FinallyTest1 &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        </span><br><span class="line">        System.out.println(test1());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static int test1() &#123;</span><br><span class="line">        int b = 20;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            System.out.println(&quot;try block&quot;);</span><br><span class="line"></span><br><span class="line">            return b += 80; </span><br><span class="line">        &#125;</span><br><span class="line">        catch (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(&quot;catch block&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        finally &#123;</span><br><span class="line">            </span><br><span class="line">            System.out.println(&quot;finally block&quot;);</span><br><span class="line">            </span><br><span class="line">            if (b &gt; 25) &#123;</span><br><span class="line">                System.out.println(&quot;b&gt;25, b = &quot; + b);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return b;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果是<br>try block<br>finally block<br>b&gt;25, b = 100<br>100</p>
+<p>说明return语句已经执行了再去执行finally语句，不过并没有直接返回，而是等finally语句执行完了再返回结果。在字节码中的体现是：return语句的结果先放入本地变量表中，等finally中的语句执行完再从本地变量表拿出结果返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class FinallyTest1 &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        </span><br><span class="line">        System.out.println(test11());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static String test11() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            System.out.println(&quot;try block&quot;);</span><br><span class="line"></span><br><span class="line">           return test12();</span><br><span class="line">      &#125; finally &#123;</span><br><span class="line">           System.out.println(&quot;finally block&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public static String test12() &#123;</span><br><span class="line">       System.out.println(&quot;return statement&quot;);</span><br><span class="line"></span><br><span class="line">       return &quot;after return&quot;;</span><br><span class="line">   &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>try block<br>return statement<br>finally block<br>after return</p>
+<p>在这个例子中，先执行test12，然后将test12的返回值“after return”保存在本地变量表中，等finally语句执行完后，再将“after return”返回给main函数输出。</p>
+<h3 id="finally中有return语句的情况"><a href="#finally中有return语句的情况" class="headerlink" title="finally中有return语句的情况"></a>finally中有return语句的情况</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class FinallyTest2 &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(test2());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static int test2() &#123;</span><br><span class="line">        int b = 20;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            System.out.println(&quot;try block&quot;);</span><br><span class="line"></span><br><span class="line">            return b += 80;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(&quot;catch block&quot;);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(&quot;finally block&quot;);</span><br><span class="line"></span><br><span class="line">            if (b &gt; 25) &#123;</span><br><span class="line">                System.out.println(&quot;b&gt;25, b = &quot; + b);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            return 200;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // return b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>try block<br>finally block<br>b&gt;25, b = 100<br>200</p>
+<p>这说明finally里的return直接返回了，就不管try中是否还有返回语句，这里还有个小细节需要注意，finally里加上return过后，finally外面的return b就变成不可到达语句了，也就是永远不能被执行到，所以需要注释掉否则编译器报错。</p>
+<h3 id="finally中修改返回值的情况"><a href="#finally中修改返回值的情况" class="headerlink" title="finally中修改返回值的情况"></a>finally中修改返回值的情况</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class FinallyTest3 &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(test3());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static int test3() &#123;</span><br><span class="line">        int b = 20;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            System.out.println(&quot;try block&quot;);</span><br><span class="line"></span><br><span class="line">            return b += 80;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(&quot;catch block&quot;);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(&quot;finally block&quot;);</span><br><span class="line"></span><br><span class="line">            if (b &gt; 25) &#123;</span><br><span class="line">                System.out.println(&quot;b&gt;25, b = &quot; + b);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            b = 150;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return 2000;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>try block<br>finally block<br>b&gt;25, b = 100<br>100</p>
+<p>和下面的例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">import java.util.*;</span><br><span class="line"></span><br><span class="line">public class FinallyTest6</span><br><span class="line">&#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(getMap().get(&quot;KEY&quot;).toString());</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    public static Map&lt;String, String&gt; getMap() &#123;</span><br><span class="line">        Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();</span><br><span class="line">        map.put(&quot;KEY&quot;, &quot;INIT&quot;);</span><br><span class="line">         </span><br><span class="line">        try &#123;</span><br><span class="line">            map.put(&quot;KEY&quot;, &quot;TRY&quot;);</span><br><span class="line">            return map;</span><br><span class="line">        &#125;</span><br><span class="line">        catch (Exception e) &#123;</span><br><span class="line">            map.put(&quot;KEY&quot;, &quot;CATCH&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        finally &#123;</span><br><span class="line">            map.put(&quot;KEY&quot;, &quot;FINALLY&quot;);</span><br><span class="line">            map = null;</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">        return map;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>FINALLY</p>
+<p>这里应该和上面提到的本地变量表有关，finally中修改的和try中赋值的不是同一个变量，而引用类型的修改有效，因为其存储区域在堆中。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/01/12/关于finally/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-预处理器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -682,133 +823,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2018/01/08/Android打开文件/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-32位和64位" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/05/32位和64位/">32位和64位</a>
-    </h1>
-  
-
-        
-        <a href="/2018/01/05/32位和64位/" class="archive-article-date">
-  	<time datetime="2018-01-05T09:49:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>32位和64位操作系统是指：CPU一次处理数据的能力是32位还是64位。现在市场上的CPU一般都是64位的，但是这些CPU并不是真正意义上的64 位CPU，里面依然保留了大部分32位的技术，只是进行了部分64位的改进。32位和64位的区别还涉及了内存的寻址方面，32位系统的最大寻址空间是2 的32次方= 4294967296（bit）= 4（GB）左右，而64位系统的最大寻址空间的寻址空间则达到了2的64次方= 4294967296（bit）的32次方=数值大于1亿GB。换而言之，就是说32位系统的处理器最大只支持到4G内存，而64位系统最大支持的内存高 达亿位数。</p>
-<p>如果现在市场上的CPU全部是64位的平台开发的，那么现在的所有软件都使用不了，因为目前大部分的软件都是基于32位开发的，目前我们说的64位的 windows7系统也只是在32位系统的基础上添加了一些64位的寻址功能，其实对于我们来说64位的CPU，操作系统意义不大，毕竟我们使用的内存大 部分还是2G，使用的也是常用软件，对于运算速度的要求也不大。64位主要应用于大型机械或大型服务站。所以32位和64位相比，64位的速度更快，但是 32位更适合我们，如果你装了64位的操作系统，你会发现，很多软件使用不了。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/01/05/32位和64位/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-关于面试" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/05/关于面试/">关于面试</a>
-    </h1>
-  
-
-        
-        <a href="/2018/01/05/关于面试/" class="archive-article-date">
-  	<time datetime="2018-01-05T08:32:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>看一下<a href="http://blog.csdn.net/chdjj/article/details/22977897" target="_blank" rel="noopener">这一篇博客</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/01/05/关于面试/">展开全文 >></a>
         </p>
       
 
